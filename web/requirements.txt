@@ -1,0 +1,9 @@
+Django >=3.0, <4.0
+gunicorn
+psycopg2
+redis
+
+#Dev Things
+selenium>=3.141, <4.0
+django-anymail[mailgun]
+django-rq
