@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-xozcb-vblvp*hrelanu1787@#=&ex(f6@9n%skoq$+u*^a7t73
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    # Apps
+    'django_rq',
+    'photologue',
+    'sortedm2m',
+    'video_encoding',
+    # LOCAL apps
+    'medialogue',
 ]
 
 MIDDLEWARE = [
@@ -119,7 +127,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+REDIS_HOST = '6379'
+REDIS_PORT = 'redis'
+RQ_QUEUES = {
+    'default': {
+        'HOST': REDIS_HOST,
+        'PORT': REDIS_PORT,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
