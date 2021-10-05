@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     # Apps
-    'django_rq',
     'photologue',
     'sortedm2m',
     'video_encoding',
@@ -134,14 +133,3 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = '/media/'
-
-REDIS_HOST = '6379'
-REDIS_PORT = 'redis'
-RQ_QUEUES = {
-    'default': {
-        'HOST': REDIS_HOST,
-        'PORT': REDIS_PORT,
-        'DB': 0,
-        'DEFAULT_TIMEOUT': 360,
-    }
-}
