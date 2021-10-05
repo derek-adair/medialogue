@@ -135,8 +135,8 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = '/media/'
 
-REDIS_HOST = '6379'
-REDIS_PORT = 'redis'
+REDIS_PORT = '6379'
+REDIS_HOST = 'redis'
 RQ_QUEUES = {
     'default': {
         'HOST': REDIS_HOST,

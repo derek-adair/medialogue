@@ -21,3 +21,7 @@ queuedata
 # develompment files
 *.sqlite3
 *.log*
+
+# media files
+media/
+queue_data/
