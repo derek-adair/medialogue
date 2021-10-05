@@ -16,10 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from photologue.models import Gallery
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('medialogue.urls', namespace='medialogue')),
-]
+    path('photologue/', include('photologue.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 admin.site.unregister(Gallery)
