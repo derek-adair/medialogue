@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Bulk Upload{% endblock %}
+{% block extra_head %}
+<link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+<h1>Bulk Upload</h1>
+<form action='/upload/' method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="file"
+	class="filepond"
+	id="attachments"
+	name="filepond"
+	multiple
+	>
+    <input type="submit" value="Save">
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script>
+FilePond.registerPlugin(
+  FilePondPluginImagePreview,
+);
+
+// Select the file input and use 
+// create() to turn it into a pond
+FilePond.create(
+  document.getElementById('attachments')
+);
+FilePond.setOptions({
+    server: {
+	url: window.location.origin + '/fp',
+	headers: {
+	    'X-CSRFToken': csrftoken
+	},
+        process: '/process/',
+        patch: '/patch/',
+        revert: '/revert/',
+        fetch: '/fetch/?target='
+    },
+});
+</script>
+{% endblock %}
