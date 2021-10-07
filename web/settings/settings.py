@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'photologue',
     'sortedm2m',
     'video_encoding',
+    'django_drf_filepond',
     # LOCAL apps
     'medialogue',
 ]
@@ -145,3 +146,6 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     }
 }
+
+DJANGO_DRF_FILEPOND_FILE_STORE_PATH = str(MEDIA_ROOT / "uploads")
+DJANGO_DRF_FILEPOND_UPLOAD_TMP = str(BASE_DIR / 'filepond-temp-uploads')
