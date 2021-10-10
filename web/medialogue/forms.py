@@ -42,7 +42,7 @@ class BulkMediaForm(forms.Form):
                                    required=False,
                                    help_text=_('Uncheck this to make the uploaded '
                                                'gallery and included photographs private.'))
-    filepond = SimpleArrayField(forms.CharField(max_length=255))
+    filepond = SimpleArrayField(forms.CharField(max_length=255), widget=forms.HiddenInput())
 
     def clean_title(self):
         gallery_title = self.cleaned_data['gallery_title']
