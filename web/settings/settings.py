@@ -147,5 +147,19 @@ RQ_QUEUES = {
     }
 }
 
-DJANGO_DRF_FILEPOND_FILE_STORE_PATH = str(MEDIA_ROOT / "uploads")
+DJANGO_DRF_FILEPOND_FILE_STORE_PATH = str(MEDIA_ROOT)
 DJANGO_DRF_FILEPOND_UPLOAD_TMP = str(BASE_DIR / 'filepond-temp-uploads')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

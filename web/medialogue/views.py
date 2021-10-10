@@ -12,9 +12,8 @@ def BulkUpload(request):
     if request.method == 'POST':
         form = BulkMediaForm(request.POST)
         if form.is_valid():
-            # process the data in form.cleaned_data as required
+            pk = form.save()
             return HttpResponseRedirect('/galleries/{}'.format(pk))
-
     else:
         form = BulkMediaForm()
 
