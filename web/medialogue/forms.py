@@ -1,6 +1,8 @@
 import logging
 logger = logging.getLogger(__name__)
 from io import BytesIO
+import itertools
+from PIL import Image,UnidentifiedImageError
 
 from django import forms
 from django.contrib.postgres.forms.array import SimpleArrayField
@@ -60,13 +62,15 @@ class BulkMediaForm(forms.Form):
                     _('Select an existing gallery, or enter a title for a new gallery.'))
         return cleaned_data
 
-    def _generate_slug(title):
+    def _generate_slug(self, title):
         slug_candidate = slug_original = slugify(title)
+        num_found = 0
         for i in itertools.count(1):
             if not Photo.objects.filter(slug=slug_candidate).exists():
                 break
+            num_found+=1
             slug_candidate = '{}-{}'.format(slug_original, i)
-        return slug_candidate
+        return slug_candidate, num_found
 
     def save(self):
         filelist = self.cleaned_data['filepond']
@@ -91,21 +95,22 @@ class BulkMediaForm(forms.Form):
             logger.debug('Reading file "{}".'.format(upload_id))
 
             su = store_upload(upload_id,
-                    destination_file_path="{}/photologue/".format(settings.MEDIA_ROOT))
-            (filename, bytes_io) = get_stored_upload_file_data(su)
-            data = bytes_io.read()
+                    destination_file_path="{}/photologue/{}".format(settings.MEDIA_ROOT, upload_id))
+            (filename, data) = get_stored_upload_file_data(su)
 
             if not len(data):
                 logger.debug('File "{}" is empty.'.format(filename))
                 continue
 
-            photo_title_root = self.cleaned_data['media_title'] if self.cleaned_data['media_title'] else gallery.title
+            media_title_root = numbered_title = self.cleaned_data['media_title'] if self.cleaned_data['media_title'] else gallery.title
 
             # A photo might already exist with the same slug. So it's somewhat inefficient,
             # but we loop until we find a slug that's available.
-            slug = _generate_slug(photo_title_root)
+            slug, num_found = self._generate_slug(media_title_root)
 
-            photo = Photo(title=photo_title,
+            if num_found > 0:
+                numbered_title = "{}({})".format(media_title_root, num_found)
+            photo = Photo(title=numbered_title,
                           slug=slug,
                           is_public=self.cleaned_data['is_public'])
 
@@ -114,12 +119,11 @@ class BulkMediaForm(forms.Form):
                 file = BytesIO(data)
                 opened = Image.open(file)
                 opened.verify()
-            except Exception:
+            except UnidentifiedImageError:
                 # Pillow doesn't recognize it as an image.
                 # If a "bad" file is found we just skip it.
                 # But we do flag this both in the logs and to the user.
-                logger.error('Could not process file "{}" in the .zip archive.'.format(
-                    filename))
+                logger.error('Could not process file "{}"'.format(filename))
                 continue
 
             contentfile = ContentFile(data)
@@ -127,3 +131,4 @@ class BulkMediaForm(forms.Form):
             photo.save()
             photo.sites.add(current_site)
             gallery.photos.add(photo)
+            return gallery.pk
