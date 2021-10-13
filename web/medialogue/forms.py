@@ -2,7 +2,8 @@ import logging
 logger = logging.getLogger(__name__)
 from io import BytesIO
 import itertools
-from PIL import Image,UnidentifiedImageError
+import magic
+from PIL import Image, UnidentifiedImageError
 
 from django import forms
 from django.contrib.postgres.forms.array import SimpleArrayField
@@ -66,7 +67,7 @@ class BulkMediaForm(forms.Form):
         slug_candidate = slug_original = slugify(title)
         num_found = 0
         for i in itertools.count(1):
-            if not Photo.objects.filter(slug=slug_candidate).exists():
+            if not Photo.objects.filter(slug=slug_candidate).exists() and not Video.objects.filter(slug=slug_candidate).exists():
                 break
             num_found+=1
             slug_candidate = '{}-{}'.format(slug_original, i)
@@ -110,25 +111,37 @@ class BulkMediaForm(forms.Form):
 
             if num_found > 0:
                 numbered_title = "{}({})".format(media_title_root, num_found)
-            photo = Photo(title=numbered_title,
-                          slug=slug,
-                          is_public=self.cleaned_data['is_public'])
 
-            # Basic check that we have a valid image.
-            try:
-                file = BytesIO(data)
-                opened = Image.open(file)
-                opened.verify()
-            except UnidentifiedImageError:
-                # Pillow doesn't recognize it as an image.
-                # If a "bad" file is found we just skip it.
-                # But we do flag this both in the logs and to the user.
-                logger.error('Could not process file "{}"'.format(filename))
-                continue
+            file_mimetype = magic.from_buffer(data, mime=True).split('/')[0]
+            if file_mimetype  == 'image':
+                logger.info("image mimetype detected")
+                photo = Photo(title=numbered_title,
+                              slug=slug,
+                              is_public=self.cleaned_data['is_public'])
 
-            contentfile = ContentFile(data)
-            photo.image.save(filename, contentfile)
-            photo.save()
-            photo.sites.add(current_site)
-            gallery.photos.add(photo)
-            return gallery.pk
+                try:
+                    file = BytesIO(data)
+                    opened = Image.open(file)
+                    opened.verify()
+                except UnidentifiedImageError:
+                    # Pillow doesn't recognize it as an image.
+                    # If a "bad" file is found we just skip it.
+                    # But we do flag this both in the logs and to the user.
+                    logger.error('Could not process file "{}"'.format(filename))
+                    continue
+
+                contentfile = ContentFile(data)
+                photo.image.save(filename, contentfile)
+                photo.save()
+                photo.sites.add(current_site)
+                gallery.photos.add(photo)
+            elif file_mimetype == "video":
+                logger.info("video mimetype detected")
+                video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'])
+                contentfile = ContentFile(data)
+                video.file.save(filename, contentfile)
+                video.save()
+                gallery.videos.add(video)
+            else:
+                logger.error('cound not process file "{}"'.format(filename))
+        return gallery.pk

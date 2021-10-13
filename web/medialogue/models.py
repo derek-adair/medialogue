@@ -15,6 +15,11 @@ class Video(models.Model):
 	height_field='height',
 	duration_field='duration'
 	)
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(unique=True,
+                            max_length=250,
+                            help_text='A "slug" is a unique URL-friendly title for an object.')
+    is_public = models.BooleanField(default=True)
     format_set = GenericRelation(Format)
 
     def __str__(self):
