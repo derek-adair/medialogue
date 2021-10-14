@@ -15,6 +15,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 
 from django_drf_filepond.api import store_upload, get_stored_upload_file_data
+from django_drf_filepond.models import TemporaryUpload
 
 from .models import MediaGallery, Video
 from photologue.models import Photo
@@ -45,7 +46,8 @@ class BulkMediaForm(forms.Form):
                                    required=False,
                                    help_text=_('Uncheck this to make the uploaded '
                                                'gallery and included photographs private.'))
-    filepond = SimpleArrayField(forms.CharField(max_length=255), widget=forms.HiddenInput())
+    filepond = SimpleArrayField(forms.CharField(max_length=255), widget=forms.HiddenInput(),
+            required=False)
 
     def clean_title(self):
         gallery_title = self.cleaned_data['gallery_title']
@@ -96,9 +98,9 @@ class BulkMediaForm(forms.Form):
             logger.debug('Reading file "{}".'.format(upload_id))
 
             su = store_upload(upload_id,
-                    destination_file_path="{}/photologue/{}".format(settings.MEDIA_ROOT, upload_id))
-            (filename, data) = get_stored_upload_file_data(su)
+                    destination_file_path="photologue/{}".format(upload_id))
 
+            (filename, data) = get_stored_upload_file_data(su)
             if not len(data):
                 logger.debug('File "{}" is empty.'.format(filename))
                 continue
@@ -119,27 +121,14 @@ class BulkMediaForm(forms.Form):
                               slug=slug,
                               is_public=self.cleaned_data['is_public'])
 
-                try:
-                    file = BytesIO(data)
-                    opened = Image.open(file)
-                    opened.verify()
-                except UnidentifiedImageError:
-                    # Pillow doesn't recognize it as an image.
-                    # If a "bad" file is found we just skip it.
-                    # But we do flag this both in the logs and to the user.
-                    logger.error('Could not process file "{}"'.format(filename))
-                    continue
-
-                contentfile = ContentFile(data)
-                photo.image.save(filename, contentfile)
+                photo.image = "photologue/{}".format(upload_id)
                 photo.save()
                 photo.sites.add(current_site)
                 gallery.photos.add(photo)
             elif file_mimetype == "video":
                 logger.info("video mimetype detected")
                 video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'])
-                contentfile = ContentFile(data)
-                video.file.save(filename, contentfile)
+                video.file = "photologue/{}".format(upload_id)
                 video.save()
                 gallery.videos.add(video)
             else:
