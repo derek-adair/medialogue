@@ -49,9 +49,22 @@ FilePond.registerPlugin(
 
 // Select the file input and use 
 // create() to turn it into a pond
-FilePond.create(
-  document.getElementById('attachments')
+const pond = FilePond.create(
+    document.getElementById('attachments'), {
+        onaddfilestart: (file) => { isLoadingCheck(); },
+        onprocessfile: (files) => { isLoadingCheck(); } 
+    }
 );
+function isLoadingCheck(){
+    var isLoading = pond.getFiles().filter(x=>x.status !== 5).length !== 0,
+        submitBtn = document.querySelector('form [type="submit"]')
+    
+    if(isLoading) {
+        submitBtn.setAttribute("disabled", "disabled");
+    } else {
+        submitBtn.removeAttribute("disabled");
+    }
+}
 FilePond.setOptions({
     server: {
 	url: window.location.origin + '/fp',
