@@ -47,7 +47,7 @@ class Video(models.Model):
         return reverse("medialogue:ml-video", args=[self.slug])
 
     def __str__(self):
-        return self.file.name
+        return self.title
 
 # Auto add the current site
 models.signals.post_save.connect(add_default_site, sender=Video)
