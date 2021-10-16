@@ -1,9 +1,10 @@
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from .forms import BulkMediaForm
-from .models import MediaGallery
+from .models import MediaGallery, Video
 
 class GalleryListView(ListView):
     queryset = MediaGallery.objects.is_public()
@@ -26,7 +27,8 @@ def BulkUpload(request):
 	# Remove the blank value associated with the automatic rendering of BulkMediaForm
 	# @TODO - option 1) modify filepond to add id's as a vlue in csv
 	#         option 2) manually render the form and exclude filepond input
-        post_data['filepond'].remove('')
+        if '' in post_data['filepond']:
+            post_data['filepond'].remove('')
         form = BulkMediaForm(post_data)
         if form.is_valid():
             pk = form.save()
@@ -35,3 +37,6 @@ def BulkUpload(request):
         form = BulkMediaForm()
 
     return TemplateResponse(request, 'medialogue/bulk-upload.html', {'form': form})
+
+class VideoDetailView(DetailView):
+    queryset=Video.objects.on_site().is_public()
