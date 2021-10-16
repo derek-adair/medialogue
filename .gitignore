@@ -21,8 +21,11 @@ queuedata
 # develompment files
 *.sqlite3
 *.log*
+*.egg-info
 
 # media files
 media/
 queue_data/
 filepond-temp-uploads
+build/
+dist/
