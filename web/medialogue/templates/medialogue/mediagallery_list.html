@@ -16,7 +16,7 @@
 <div class="row">
     <div class="col-lg-12">
         <h2>{{gallery.title}}</h2>
-        <p> Published {{gallery.date_added}}</p>
+        <p>{{gallery.date_added}}</p>
         <ul>
 	{% for photo in gallery.photos.all %}	
 	    <li class="ml-gallery-item ml-gallery-image">
@@ -26,8 +26,9 @@
             </li>
         {% endfor %}
 	{% for video in gallery.videos.all %}	
-	    <li class="ml-gallery-item ml-gallery-video"><a href="{{video.get_absolute_url }}"><img
-                    src="{{video.thumbnail.url }}" width="300" /></a></li>
+         {% if video.thumbnail %}
+	    <li class="ml-gallery-item ml-gallery-video"><a href="{{video.get_absolute_url }}"><img src="{{video.thumbnail.url }}" width="300" /></a></li>
+            {% endif %}
         {% endfor %}
     </div>
 </div>
