@@ -2,7 +2,7 @@ import os.path as path
 from setuptools import setup
 from pkg_resources import parse_requirements
 cwd = path.dirname(__file__)
-version = "0.0.1"
+version = "0.0.2"
 
 def get_requirements(source):
     with open(source) as f:
