@@ -1,12 +1,24 @@
-import os.path as path
+import os
 from setuptools import setup
 from pkg_resources import parse_requirements
-cwd = path.dirname(__file__)
-version = "0.0.2"
+
+version = "0.0.3"
 
 def get_requirements(source):
     with open(source) as f:
         return sorted({str(req) for req in parse_requirements(f.read())})
+
+# Lovingly stolen from https://tinyurl.com/2fwt4c99
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
+
+migration_files = package_files('medialogue/migrations')
+template_files = package_files('medialogue/templates')
+
 setup(
     name='django-medialogue',
     author='Derek Adair',
@@ -27,6 +39,10 @@ setup(
                  'Programming Language :: Python :: 3.6',
                  'Topic :: Utilities'],
     packages=['medialogue'],
+    package_data= {
+            '': migration_files,
+            '': template_files
+        },
     install_requires=get_requirements('build-requirements.txt'),
     url="https://github.com/derek-adair/medialogue",
     )
