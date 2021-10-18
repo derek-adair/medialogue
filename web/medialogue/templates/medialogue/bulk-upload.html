@@ -5,12 +5,23 @@
 {% block extra_head %}
 <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
 <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/SelectFilter2.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/forms.css' %}"/>
 {% endblock %}
 {% block content %}
 <h1>Bulk Upload</h1>
 <form action='/upload/' method="POST">
     {% csrf_token %}
     {{ form.as_p }}
+    {{ form.media }}
     <input type="file"
 	class="filepond"
 	id="attachments"

@@ -8,8 +8,8 @@ from PIL import Image, UnidentifiedImageError
 from django import forms
 from django.contrib.postgres.forms.array import SimpleArrayField
 from django.contrib.sites.models import Site
+from django.contrib.admin.widgets import AdminDateWidget
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_str
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
 from django.conf import settings
@@ -48,6 +48,7 @@ class BulkMediaForm(forms.Form):
                                                'gallery and included photographs private.'))
     filepond = SimpleArrayField(forms.CharField(max_length=255), widget=forms.HiddenInput(),
             required=False)
+    date_added = forms.DateField(widget=AdminDateWidget(), label="Date")
 
     def clean_title(self):
         gallery_title = self.cleaned_data['gallery_title']
@@ -83,9 +84,9 @@ class BulkMediaForm(forms.Form):
             logger.debug('Using pre-existing gallery.')
             gallery = self.cleaned_data['gallery']
         else:
-            logger.debug(
-                force_str('Creating new gallery "{0}".').format(self.cleaned_data['gallery_title']))
+            logger.debug('Creating new gallery "{0}".'.format(self.cleaned_data['gallery_title']))
             gallery = MediaGallery.objects.create(title=self.cleaned_data['gallery_title'],
+                                             date_added=self.cleaned_data['date_added'],
                                              slug=slugify(self.cleaned_data['gallery_title']),
                                              description=self.cleaned_data['description'],
                                              is_public=self.cleaned_data['is_public'])
@@ -119,6 +120,7 @@ class BulkMediaForm(forms.Form):
                 logger.info("image mimetype detected")
                 photo = Photo(title=numbered_title,
                               slug=slug,
+                              date_added=self.cleaned_data['date_added'],
                               is_public=self.cleaned_data['is_public'])
 
                 photo.image = "photologue/{}".format(upload_id)
@@ -127,7 +129,7 @@ class BulkMediaForm(forms.Form):
                 gallery.photos.add(photo)
             elif file_mimetype == "video":
                 logger.info("video mimetype detected")
-                video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'])
+                video = Video(title=numbered_title, slug=slug, date_added=self.cleaned_data['date_added'], is_public=self.cleaned_data['is_public'])
                 video.file = "photologue/{}".format(upload_id)
                 video.save()
                 gallery.videos.add(video)

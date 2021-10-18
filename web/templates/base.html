@@ -8,8 +8,16 @@
         {% block extra_head %}{% endblock %}
     </head>
     <body>
+        <h1>Medialogue Demo</h1>
+        <p>Medialogue requires a template "base.html".  <a href="https://github.com/derek-adair/medialogue/blob/master/web/templates/base.html">View this here.</a> </p>
+        <p>Medialogue requries 3 blocks in your base template:</p>
+        <ol>
+             <li>block "extra_head" - anything you want included in the head of your document, typically css, etc.</li>
+             <li>block "body" - main body of your html pages</li>
+             <li>block "extra_scripts" - js scripts to be included at the bottom of your document</li>
+        </ol>
         <ul>
-          <li><a href="upload/">Bulk Upload</a></li>
+          <li><a href="/upload/">Bulk Upload</a></li>
         </ul>
         {% block content %}{% endblock %}
         {% block extra_scripts %}{% endblock %}
