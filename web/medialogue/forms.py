@@ -135,4 +135,4 @@ class BulkMediaForm(forms.Form):
                 gallery.videos.add(video)
             else:
                 logger.error('cound not process file "{}"'.format(filename))
-        return gallery.pk
+        return gallery.slug

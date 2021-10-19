@@ -59,3 +59,6 @@ class MediaGallery(Gallery):
 	verbose_name=('videos'),
 	blank=True
     )
+
+    def get_absolute_url(self):
+        return reverse('medialogue:ml-gallery', args=[self.slug])

@@ -22,8 +22,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/queues/', include('django_rq.urls')),
     path('admin/', admin.site.urls),
-    path('photologue/', include('photologue.urls')),
     path('', include('medialogue.urls', namespace='medialogue')),
+    path('', include('photologue.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

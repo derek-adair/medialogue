@@ -1,13 +1,17 @@
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.decorators.http import require_http_methods
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from .forms import BulkMediaForm
 from .models import MediaGallery, Video
 
-class GalleryListView(ListView):
-    queryset = MediaGallery.objects.is_public()
+class MediaGalleryListView(ListView):
+    queryset = MediaGallery.objects.is_public().on_site()
+
+class MediaGalleryDetailView(DetailView):
+    queryset = MediaGallery.objects.is_public().on_site()
 
 def querydict_to_dict(query_dict):
     # request.POST only returns the first value in a list, this grabs it all
@@ -31,8 +35,8 @@ def BulkUpload(request):
             post_data['filepond'].remove('')
         form = BulkMediaForm(post_data)
         if form.is_valid():
-            pk = form.save()
-            return HttpResponseRedirect('/galleries/{}'.format(pk))
+            slug = form.save()
+            return HttpResponseRedirect(reverse('medialogue:ml-gallery', args=[slug]))
     else:
         form = BulkMediaForm()
 
@@ -40,3 +44,4 @@ def BulkUpload(request):
 
 class VideoDetailView(DetailView):
     queryset=Video.objects.on_site().is_public()
+
