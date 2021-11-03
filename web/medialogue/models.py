@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from video_encoding.fields import VideoField
 from video_encoding.models import Format
-# imports
+
 from sortedm2m.fields import SortedManyToManyField
 from photologue.models import Gallery, add_default_site
 from photologue.managers import SharedQueries
@@ -21,6 +21,12 @@ class SharedQueries(models.query.QuerySet):
         return self.filter(is_public=True)
 
 class Video(models.Model):
+    """
+    Video version of photologue.models.Photo
+    NOTE -  Calls post_save connected in apps.py/signals.py
+                 - medialogue.tasks.create_thumbnail 
+                 - django_video_encoding.tasks.convert_all_videos
+    """
     objects = SharedQueries.as_manager()
     # Meta Fields
     title = models.CharField(max_length=250)
