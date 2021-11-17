@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-SITE_ID=1
+SITE_ID=int(os.getenv("DJANGO_SITE_ID", 1))
 
 # Application definition
 
@@ -41,12 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     # Apps
     'django_rq',
-    'photologue',
     'sortedm2m',
     'video_encoding',
     'django_drf_filepond',
     # LOCAL apps
     'medialogue',
+    'photologue',
 ]
 
 MIDDLEWARE = [
