@@ -1,8 +1,8 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 from pkg_resources import parse_requirements
 
-version = "0.0.8"
+version = "0.0.9"
 
 def get_requirements(source):
     with open(source) as f:
@@ -18,6 +18,7 @@ def package_files(directory):
 
 migration_files = package_files('medialogue/migrations')
 template_files = package_files('medialogue/templates')
+static_files = package_files('medialogue/static')
 
 setup(
     name='django-medialogue',
@@ -39,9 +40,11 @@ setup(
                  'Programming Language :: Python :: 3.6',
                  'Topic :: Utilities'],
     packages=['medialogue'],
+    include_pacakge_data=True,
     package_data= {
             '': migration_files,
-            '': template_files
+            '': template_files,
+            '': static_files
         },
     install_requires=get_requirements('build-requirements.txt'),
     url="https://github.com/derek-adair/medialogue",
