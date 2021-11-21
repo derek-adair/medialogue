@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+		'medialogue.context_processors.block_downloads',
             ],
         },
     },
@@ -164,3 +165,5 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+MEDIALOGUE_BLOCK_DOWNLOADS = os.getenv("MEDIALOGUE_BLOCK_DOWNLOADS", False)

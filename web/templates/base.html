@@ -24,6 +24,23 @@ crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
                 integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
                 crossorigin="anonymous"></script>
-        {% block extra_scripts %}{% endblock %}
+	{% if MEDIALOGUE_BLOCK_DOWNLOADS %}
+        <script>
+	if (document.addEventListener) {
+	    document.addEventListener('contextmenu', function(e) {
+	    if(e.target.className == "img-thumbnail"){
+		e.preventDefault()
+	    }
+	    }, false);
+	} else {
+	    document.attachEvent('oncontextmenu', function() {
+		if(e.target.className == "img-thumbnail"){
+		    window.event.returnValue = false;
+		}
+	    });
+	}
+       </script>
+       {% endif %}
+       {% block extra_scripts %}{% endblock %}
     </body>
 </html>
