@@ -15,7 +15,11 @@
 <div class="row">
     <div class="col-md-6">
         {% if object.caption %}<p>{{ object.caption|safe }}</p>{% endif %}
-            <video controls autoplay src="{{ object.file.url }}" class="img-thumbnail" alt="{{ object.title }}">
+            <video controls autoplay class="img-thumbnail" alt="{{ object.title }}">
+                {% for format in object.format_set.all %}
+                    <source src="{{format.file.url }}" />
+                {% endfor %}
+            </video>
     </div>
     <div class="col-md-6">
         {% if object.public_galleries %}
