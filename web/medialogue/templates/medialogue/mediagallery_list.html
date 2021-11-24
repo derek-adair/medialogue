@@ -16,7 +16,7 @@
 <div class="row">
     <div class="col-lg-12 gallery-sample">
         <h2><a href="{{gallery.get_absolute_url}}">{{gallery.title}}</a></h2>
-        <p>{{gallery.date_added}}</p>
+        <p>{{gallery.date_added | date:"F d, Y"}}</p>
 	{% for photo in gallery.photos.all %}	
                 <a href="{{ photo.get_absolute_url }}">
                     <img src="{{photo.get_thumbnail_url}}" class="img-thumbnail" width="100" />
