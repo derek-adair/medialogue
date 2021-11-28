@@ -46,6 +46,5 @@ setup(
             '': template_files,
             '': static_files
         },
-    install_requires=get_requirements('build-requirements.txt'),
     url="https://github.com/derek-adair/medialogue",
     )
