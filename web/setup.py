@@ -42,5 +42,6 @@ setup(
     package_data= {
             '': package_data,
         },
+    install_requires=get_requirements('build-requirements.txt'),
     url="https://github.com/derek-adair/medialogue",
     )
