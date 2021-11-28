@@ -16,9 +16,7 @@ def package_files(directory):
             paths.append(os.path.join('..', path, filename))
     return paths
 
-migration_files = package_files('medialogue/migrations')
-template_files = package_files('medialogue/templates')
-static_files = package_files('medialogue/static')
+package_data = package_files('medialogue/migrations') + package_files('medialogue/templates') + package_files('medialogue/static')
 
 setup(
     name='django-medialogue',
@@ -40,11 +38,9 @@ setup(
                  'Programming Language :: Python :: 3.6',
                  'Topic :: Utilities'],
     packages=['medialogue'],
-    include_pacakge_data=True,
+    include_package_data=True,
     package_data= {
-            '': migration_files,
-            '': template_files,
-            '': static_files
+            '': package_data,
         },
     url="https://github.com/derek-adair/medialogue",
     )
