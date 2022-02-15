@@ -4,14 +4,15 @@ from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
-from .forms import BulkMediaForm
-from .models import MediaGallery, Video
+from .forms import NewAlbumForm
+#@TODO - refactor MediaGallery model name to Album
+from .models import MediaGallery as Album, Video
 
-class MediaGalleryListView(ListView):
-    queryset = MediaGallery.objects.is_public().on_site()
+class AlbumListView(ListView):
+    queryset = Album.objects.is_public().on_site()
 
-class MediaGalleryDetailView(DetailView):
-    queryset = MediaGallery.objects.is_public().on_site()
+class AlbumDetailView(DetailView):
+    queryset = Album.objects.is_public().on_site()
 
 def querydict_to_dict(query_dict):
     # request.POST only returns the first value in a list, this grabs it all
@@ -25,7 +26,7 @@ def querydict_to_dict(query_dict):
     return data
 
 @require_http_methods(['GET', 'POST'])
-def BulkUpload(request):
+def NewAlbum(request):
     if request.method == 'POST':
         post_data = querydict_to_dict(request.POST)
 	# Remove the blank value associated with the automatic rendering of BulkMediaForm
@@ -33,15 +34,14 @@ def BulkUpload(request):
 	#         option 2) manually render the form and exclude filepond input
         if '' in post_data['filepond']:
             post_data['filepond'].remove('')
-        form = BulkMediaForm(post_data)
+        form = NewAlbumForm(post_data)
         if form.is_valid():
             slug = form.save()
-            return HttpResponseRedirect(reverse('medialogue:ml-gallery', args=[slug]))
+            return HttpResponseRedirect(reverse('medialogue:ml-album', args=[slug]))
     else:
-        form = BulkMediaForm()
+        form = NewAlbumForm()
 
-    return TemplateResponse(request, 'medialogue/bulk-upload.html', {'form': form})
+    return TemplateResponse(request, 'medialogue/new-album.html', {'form': form})
 
 class VideoDetailView(DetailView):
     queryset=Video.objects.on_site().is_public()
-

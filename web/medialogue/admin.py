@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MediaGallery, Video
+from .models import MediaGallery as Album, Video
 
 from video_encoding.admin import FormatInline
 
@@ -7,6 +7,6 @@ from video_encoding.admin import FormatInline
 class VideoAdmin(admin.ModelAdmin):
    inlines = (FormatInline,)
 
-@admin.register(MediaGallery)
-class MediaGalleryAdmin(admin.ModelAdmin):
+@admin.register(Album)
+class AlbumAdmin(admin.ModelAdmin):
     pass

@@ -18,7 +18,7 @@
 {% endblock %}
 {% block content %}
 <h1>Bulk Upload</h1>
-<form action='/upload/' method="POST">
+<form action='/album/new/' method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     {{ form.media }}

@@ -67,4 +67,4 @@ class MediaGallery(Gallery):
     )
 
     def get_absolute_url(self):
-        return reverse('medialogue:ml-gallery', args=[self.slug])
+        return reverse('medialogue:ml-album', args=[self.slug])

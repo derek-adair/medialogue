@@ -1,10 +1,10 @@
 from django.urls import path, include, re_path
-from .views import MediaGalleryListView, MediaGalleryDetailView, BulkUpload, VideoDetailView
+from .views import *
 app_name = 'medialogue'
 urlpatterns = [
-	path('gallery/', MediaGalleryListView.as_view(), name='ml-gallery-list'),
-        path('upload/', BulkUpload, name='bulk-upload'),
+	path('album/', AlbumListView.as_view(), name='ml-album-list'),
+        path('album/new/', NewAlbum, name='new-album'),
         re_path('video/(?P<slug>[\-\d\w]+)/$', VideoDetailView.as_view(), name='ml-video'),
-        re_path('gallery/(?P<slug>[\-\d\w]+)/$', MediaGalleryDetailView.as_view(), name='ml-gallery'),
+        re_path('album/(?P<slug>[\-\d\w]+)/$', AlbumDetailView.as_view(), name='ml-album'),
         path('fp/', include('django_drf_filepond.urls')),
 ]
