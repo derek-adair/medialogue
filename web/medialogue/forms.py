@@ -28,7 +28,7 @@ class MediaForm(forms.Form):
                                   required=False,
                                   help_text=_('A description of this Gallery. Only required for new galleries.'))
 
-    is_public = forms.BooleanField(label=_('Is public'),
+    is_public = forms.BooleanField(label=_('Public'),
                                    initial=True,
                                    required=False,
                                    help_text=_('Uncheck this to make the uploaded '
@@ -93,7 +93,7 @@ class MediaForm(forms.Form):
         return gallery.slug
 
 class NewAlbumForm(MediaForm):
-    gallery_title = forms.CharField(label='Gallery Title', max_length=100, required=False)
+    gallery_title = forms.CharField(label='Album Title', max_length=100, required=False)
 
     field_order = ['gallery_title', 'is_public', 'description', 'filepond',]
 

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}All galleries{% endblock %}
+{% block title %}Albums{% endblock %}
 
 {% block content %}
 
 <div class="row">
     <div class="col-lg-12">
-        <h1>All galleries</h1>
+        <h1>Albums</h1>
     </div>
 </div>
 
@@ -33,7 +33,7 @@
 {% endfor %}
 {% else %}
 <div class="row">
-    <div class="col-lg-12">No galleries were found.</div>
+    <div class="col-lg-12">No albums were found.</div>
 </div>
 {% endif %}
 {% endblock %}
