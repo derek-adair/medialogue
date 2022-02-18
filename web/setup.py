@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 from pkg_resources import parse_requirements
 
-version = "0.0.13"
+version = "0.0.14"
 
 def get_requirements(source):
     with open(source) as f:
