@@ -4,4 +4,3 @@ django-rq
 django-photologue>=3.7, <4.0
 django-drf-filepond
 django-video-encoding>=1.0, <2.0
-photologue
