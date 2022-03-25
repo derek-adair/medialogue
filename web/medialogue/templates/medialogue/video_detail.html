@@ -1,5 +1,4 @@
-{% extends "photologue/root.html" %}
-{% load photologue_tags %}
+{% extends "base.html" %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -20,20 +19,6 @@
                     <source src="{{format.file.url }}" />
                 {% endfor %}
             </video>
-    </div>
-    <div class="col-md-6">
-        {% if object.public_galleries %}
-        <p>This photo is found in the following galleries:</p>
-        <table>
-            {% for gallery in object.public_galleries %}
-            <tr>
-                <td>{% previous_in_gallery object gallery %}</td>
-                <td class="text-center"><a href="{{ gallery.get_absolute_url }}">{{ gallery.title }}</a></td>
-                <td>{% next_in_gallery object gallery %}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% endif %}
     </div>
 </div>
 

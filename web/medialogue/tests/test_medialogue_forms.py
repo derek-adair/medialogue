@@ -3,7 +3,7 @@ from django.test import TestCase, Client
 import pytest
 
 from medialogue.forms import BulkMediaForm
-from photologue.models import Photo
+from medialogue.models import Photo
 
 class BulkMediaFormTestCase(TestCase):
     @classmethod

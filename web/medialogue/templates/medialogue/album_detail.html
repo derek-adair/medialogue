@@ -17,7 +17,7 @@
             {% for photo in object.photos.all %}
                 <div class="grid-item">
                     <a href="{{ photo.get_absolute_url }}" >
-                        <img src="{{photo.get_thumbnail_url}}" class="img-thumbnail" width="200" /></li>
+                        <img src="{{photo.src.url}}" class="img-thumbnail" width="200" /></li>
                     </a>
                 </div>
             {% endfor %}

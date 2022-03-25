@@ -23,7 +23,7 @@ setup(
     author='Derek Adair',
     author_email='d@derekadair.comm',
     version=version,
-    description='An Extention of django-photologue with video support',
+    description='An Fork of django-medialogue with video support',
     zip_safe=False,
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Environment :: Web Environment',

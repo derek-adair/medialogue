@@ -10,7 +10,7 @@ from .models import Video
 def create_thumbnail(video_pk):
     logger.info("create_thumbnail task called")
     video = Video.objects.get(pk=video_pk)
-    if not video.file:
+    if not video.src:
         # no video file attached
         return
 
@@ -19,7 +19,7 @@ def create_thumbnail(video_pk):
         return
 
     encoding_backend = get_backend()
-    thumbnail_path = encoding_backend.get_thumbnail(video.file.path)
+    thumbnail_path = encoding_backend.get_thumbnail(video.src.path)
     filename = os.path.basename(thumbnail_path)
 
     try:

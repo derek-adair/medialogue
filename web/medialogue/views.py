@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from .forms import NewAlbumForm
 #@TODO - refactor MediaGallery model name to Album
-from .models import MediaGallery as Album, Video
+from .models import Album, Video
 
 class AlbumListView(ListView):
     queryset = Album.objects.is_public().on_site()
