@@ -20,7 +20,6 @@ from django_drf_filepond.models import TemporaryUpload
 
 from .models import Album, Video, Photo
 
-CURRENT_SITE = Site.objects.get(id=settings.SITE_ID)
 
 def _generate_slug(title, obj):
     slug_candidate = slug_original = slugify(title)
@@ -48,12 +47,14 @@ class MediaForm(forms.Form):
 
     def save(self, gallery):
         filelist = self.cleaned_data['filepond']
+        CURRENT_SITE = Site.objects.get(id=settings.SITE_ID)
 
-    # read list of filepond IDS which we will then import
-    # via store_upload from drf-filepond: https://tinyurl.com/3t3623b2
+        # read list of filepond IDS which we will then import
+        # via store_upload from drf-filepond: https://tinyurl.com/3t3623b2
         for upload_id in filelist:
             logger.debug('Reading file "{}".'.format(upload_id))
 
+            import pdb; pdb.set_trace()
             su = store_upload(upload_id,
                     destination_file_path="medialogue/{}".format(upload_id))
 
@@ -107,6 +108,7 @@ class NewAlbumForm(MediaForm):
         return gallery_title
 
     def save(self):
+        CURRENT_SITE = Site.objects.get(id=settings.SITE_ID)
         slug, num_found = _generate_slug(self.cleaned_data['gallery_title'], Album)
         gallery = Album.objects.create(title=self.cleaned_data['gallery_title'],
                                               slug=slug,

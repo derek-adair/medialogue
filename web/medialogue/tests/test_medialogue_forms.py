@@ -2,7 +2,7 @@ import os
 from django.test import TestCase, Client
 import pytest
 
-from medialogue.forms import BulkMediaForm
+from medialogue.forms import *
 from medialogue.models import Photo
 
 class BulkMediaFormTestCase(TestCase):
@@ -16,36 +16,28 @@ class BulkMediaFormTestCase(TestCase):
         cls.multi_file_gallery = minimum_gallery = {'gallery_title': 'some gallery', 'filepond':
                 ['enRqzReaCQSMEb2nFX9hmq', 'enRqzReaCQSMEb2nFX9zzz']}
 
-    def test_bulk_media_form_cleans_the_filepond_input(self):
-        form = BulkMediaForm(self.min_gallery)
+    def test_new_album_form_cleans_the_filepond_input(self):
+        form = NewAlbumForm(self.min_gallery)
 
         form.is_valid()
 
         self.assertEqual(self.min_gallery['filepond'], form.cleaned_data['filepond'])
 
-    def test_bulk_media_form_can_take_more_than_one_filepond_input(self):
-        form = BulkMediaForm(self.multi_file_gallery)
+    def test_new_album_form_can_take_more_than_one_filepond_input(self):
+        form = NewAlbumForm(self.multi_file_gallery)
 
         form.is_valid()
 
         self.assertEqual(self.multi_file_gallery['filepond'], form.cleaned_data['filepond'])
 
-    #@pytest.mark.django_db
-    #def test_bulk_media_form_throws_an_error_on_duplicate_gallery_name(self):
-    #    form1 = BulkMediaForm(self.min_gallery)
-    #    form2 = BulkMediaForm(self.min_gallery)
-    #    if form1.is_valid():
-    #        form1.save()
-    #    if form2.is_valid():
-    #        form2.save()
-    #    import pdb; pdb.set_trace()
-
-    def test_bulk_media_form_requires_either_gallery_title_or_gallery_fk(self):
-        form = BulkMediaForm({'description':'an invalid form'})
-
-        self.assertEqual(form.is_valid(), False)
-        self.assertEqual('Select an existing gallery, or enter a title for a new gallery.' in
-                form.errors["__all__"], True)
+    @pytest.mark.db
+    def test_bulk_media_form_throws_an_error_on_duplicate_gallery_name(self):
+        form1 = NewAlbumForm(self.min_gallery)
+        #form2 = NewAlbumForm(self.min_gallery)
+        if form1.is_valid():
+            form1.save()
+        #if form2.is_valid():
+            #form2.save()
 
     #def test_bulk_media_form_increments_title_slugs(self):
     #    self.assertEqual('finish test', '')
