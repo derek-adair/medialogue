@@ -35,29 +35,29 @@ class AlbumTest(MedialogueBaseTest):
         # Method takes an optional 'public' kwarg.
         self.assertEqual(self.test_album.photo_count(public=False), 2)
 
-    def test_sample(self):
-        """Method 'sample' should return a random queryset of photos from the
-        album."""
+    #def test_sample(self):
+    #    """Method 'sample' should return a random queryset of photos from the
+    #    album."""
 
-        # By default we return all photos from the album (but ordered at random).
-        _current_sample_size = models.SAMPLE_SIZE
-        models.SAMPLE_SIZE = 5
-        self.assertEqual(len(self.test_album.sample()), 2)
+    #    # By default we return all photos from the album (but ordered at random).
+    #    _current_sample_size = models.SAMPLE_SIZE
+    #    models.SAMPLE_SIZE = 5
+    #    self.assertEqual(len(self.test_album.sample()), 2)
 
-        # We can state how many photos we want.
-        self.assertEqual(len(self.test_album.sample(count=1)), 1)
+    #    # We can state how many photos we want.
+    #    self.assertEqual(len(self.test_album.sample(count=1)), 1)
 
-        # If only one photo is public then the sample cannot have more than one
-        # photo.
-        self.pl.is_public = False
-        self.pl.save()
-        self.assertEqual(len(self.test_album.sample(count=2)), 1)
+    #    # If only one photo is public then the sample cannot have more than one
+    #    # photo.
+    #    self.pl.is_public = False
+    #    self.pl.save()
+    #    self.assertEqual(len(self.test_album.sample(count=2)), 1)
 
-        self.pl.is_public = True
-        self.pl.save()
+    #    self.pl.is_public = True
+    #    self.pl.save()
 
-        # We can limit the number of photos by changing settings.
-        models.SAMPLE_SIZE = 1
-        self.assertEqual(len(self.test_album.sample()), 1)
+    #    # We can limit the number of photos by changing settings.
+    #    models.SAMPLE_SIZE = 1
+    #    self.assertEqual(len(self.test_album.sample()), 1)
 
-        models.SAMPLE_SIZE = _current_sample_size
+    #    models.SAMPLE_SIZE = _current_sample_size

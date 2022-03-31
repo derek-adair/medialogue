@@ -10,6 +10,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
 from ..models import MEDIALOGUE_DIR, Photo
+from PIL import Image
 from .factories import (LANDSCAPE_IMAGE_PATH, NONSENSE_IMAGE_PATH, QUOTING_IMAGE_PATH, UNICODE_IMAGE_PATH,
                         AlbumFactory, PhotoFactory)
 from .helpers import MedialogueBaseTest
@@ -172,54 +173,3 @@ class PhotoManagerTest(MedialogueBaseTest):
 #                                 self.test_gallery)
 #
 #        self.pl4.delete()
-
-
-class ImageModelTest(MedialogueBaseTest):
-
-    def setUp(self):
-        super(ImageModelTest, self).setUp()
-
-        # Unicode image has unicode in the path
-        # self.pu = TestPhoto(name='portrait')
-        self.pu = PhotoFactory()
-        self.pu.src.save(os.path.basename(UNICODE_IMAGE_PATH),
-                           ContentFile(open(UNICODE_IMAGE_PATH, 'rb').read()))
-
-        # Nonsense image contains nonsense
-        # self.pn = TestPhoto(name='portrait')
-        self.pn = PhotoFactory()
-        self.pn.src.save(os.path.basename(NONSENSE_IMAGE_PATH),
-                           ContentFile(open(NONSENSE_IMAGE_PATH, 'rb').read()))
-
-    def tearDown(self):
-        super(ImageModelTest, self).tearDown()
-        self.pu.delete()
-        self.pn.delete()
-
-def raw_image(mode='RGB', fmt='JPEG'):
-    """Create raw image.
-    """
-    data = BytesIO()
-    Image.new(mode, (100, 100)).save(data, fmt)
-    data.seek(0)
-    return data
-
-
-class ImageTransparencyTest(MedialogueBaseTest):
-
-    def setUp(self):
-        super(ImageTransparencyTest, self).setUp()
-        self.png = PhotoFactory()
-        self.png.src.save(
-            'trans.png', ContentFile(raw_image('RGBA', 'PNG').read()))
-
-    def tearDown(self):
-        super(ImageTransparencyTest, self).tearDown()
-        self.png.clear_cache()
-        os.unlink(os.path.join(settings.MEDIA_ROOT, self.png.src.path))
-
-    def test_create_size_png_keep_alpha_channel(self):
-        thumbnail = self.png.get_thumbnail_filename()
-        im = Image.open(
-            os.path.join(settings.MEDIA_ROOT, thumbnail))
-        self.assertEqual('RGBA', im.mode)
