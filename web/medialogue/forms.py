@@ -34,7 +34,7 @@ def _generate_slug(title, obj):
 class MediaForm(forms.Form):
     description = forms.CharField(label=_('Description'),
                                   required=False,
-                                  help_text=_('A description of this Gallery. Only required for new galleries.'))
+                                  help_text=_('A description of this Album. Only required for new albums.'))
 
     is_public = forms.BooleanField(label=_('Public'),
                                    initial=True,
@@ -54,7 +54,6 @@ class MediaForm(forms.Form):
         for upload_id in filelist:
             logger.debug('Reading file "{}".'.format(upload_id))
 
-            import pdb; pdb.set_trace()
             su = store_upload(upload_id,
                     destination_file_path="medialogue/{}".format(upload_id))
 
@@ -119,7 +118,7 @@ class NewAlbumForm(MediaForm):
 
 class EditAlbumForm(MediaForm):
     gallery = forms.ModelChoiceField(Album.objects.all(),
-                                     label=_('Gallery'),
+                                     label=_('Album'),
                                      required=True,
                                      help_text=_('Select a gallery to add these images to. Leave this empty to '
                                                  'create a new gallery from the supplied title.'))

@@ -19,10 +19,10 @@
         <img src="{{ object.get_display_url }}" class="img-thumbnail" alt="{{ object.title }}">
     </div>
     <div class="col-md-6">
-        {% if object.public_galleries %}
-        <p>{% trans "This photo is found in the following galleries" %}:</p>
+        {% if object.public_albums %}
+        <p>{% trans "This photo is found in the following albums" %}:</p>
         <table>
-            {% for gallery in object.public_galleries %}
+            {% for gallery in object.public_albums %}
             <tr>
                 <td>{% previous_in_gallery object gallery %}</td>
                 <td class="text-center"><a href="{{ gallery.get_absolute_url }}">{{ gallery.title }}</a></td>

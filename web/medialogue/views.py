@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from .forms import NewAlbumForm
-#@TODO - refactor MediaGallery model name to Album
+#@TODO - refactor MediaAlbum model name to Album
 from .models import Album, Video
 
 class AlbumListView(ListView):

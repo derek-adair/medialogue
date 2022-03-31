@@ -1,7 +1,10 @@
 import os
+import unicodedata
 from PIL import Image
 from django.utils.translation import gettext_lazy as _
+from django.utils.encoding import filepath_to_uri, force_str, smart_str
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.contenttypes.fields import GenericRelation
 from django.conf import settings
 from django.contrib.sites.managers import CurrentSiteManager
@@ -141,20 +144,31 @@ class Photo(models.Model):
 
     objects = SharedQueries.as_manager()
 
+    def EXIF(self, file=None):
+        try:
+            if file:
+                tags = exifread.process_file(file)
+            else:
+                with self.src.storage.open(self.src.name, 'rb') as file:
+                    tags = exifread.process_file(file, details=False)
+            return tags
+        except:
+            return {}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._old_src = self.src
 
     def save(self, *args, **kwargs):
         image_has_changed = False
-        if self._get_pk_val() and (self._old_image != self.image):
+        if self._get_pk_val() and (self._old_src != self.src):
             image_has_changed = True
-            self._old_image.storage.delete(self._old_image.name)  # Delete (old) base image.
+            self._old_src.storage.delete(self._old_src.name)  # Delete (old) base image.
 
         if self.date_taken is None or image_has_changed:
             # Attempt to get the date the photo was taken from the EXIF data.
             try:
-                exif_date = self.EXIF(self.image.file).get('EXIF DateTimeOriginal', None)
+                exif_date = self.EXIF(self.src.file).get('EXIF DateTimeOriginal', None)
                 if exif_date is not None:
                     d, t = exif_date.values.split()
                     year, month, day = d.split(':')
@@ -205,9 +219,6 @@ class Video(models.Model):
     def __str__(self):
         return self.title
 
-# Auto add the current site
-#models.signals.post_save.connect(add_default_site, sender=Video)
-
 class Album(models.Model):
     videos = SortedManyToManyField(
         'medialogue.Video',
@@ -231,7 +242,7 @@ class Album(models.Model):
     is_public = models.BooleanField(
         _('is public'),
         default=True,
-        help_text=_('Public galleries will be displayed in the default views.'),
+        help_text=_('Public albums will be displayed in the default views.'),
     )
     photos = SortedManyToManyField(
         'medialogue.Photo',
@@ -263,6 +274,10 @@ class Album(models.Model):
                 return self.public()[:limit]
             else:
                 return self.photos.filter(sites__id=settings.SITE_ID)[:limit]
+
+    def public(self):
+        """Return a queryset of all the public photos in this gallery."""
+        return self.photos.is_public().filter(sites__id=settings.SITE_ID)
 
     def sample(self, count=None, public=True):
         """Return a sample of photos, ordered at random.
@@ -302,3 +317,24 @@ class Album(models.Model):
 
     def get_absolute_url(self):
         return reverse('medialogue:ml-album', args=[self.slug])
+
+
+def add_default_site(instance, created, **kwargs):
+    """
+    Called via Django's signals when an instance is created.
+    In case PHOTOLOGUE_MULTISITE is False, the current site (i.e.
+    ``settings.SITE_ID``) will always be added to the site relations if none are
+    present.
+    """
+    if not created:
+        return
+    if getattr(settings, 'MEDIALOGUE_MULTISITE', False):
+        return
+    if instance.sites.exists():
+        return
+    instance.sites.add(Site.objects.get_current())
+
+
+post_save.connect(add_default_site, sender=Album)
+post_save.connect(add_default_site, sender=Video)
+post_save.connect(add_default_site, sender=Photo)
