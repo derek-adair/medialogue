@@ -1,5 +1,6 @@
 redis
 python-magic
+django>=3.0, <4.0
 django-rq
 django-drf-filepond
 django-video-encoding>=1.0, <2.0
