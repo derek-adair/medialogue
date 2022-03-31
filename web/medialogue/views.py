@@ -6,13 +6,20 @@ from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from .forms import NewAlbumForm
 #@TODO - refactor MediaAlbum model name to Album
-from .models import Album, Video
+from .models import Album, Video, Photo
 
 class AlbumListView(ListView):
     queryset = Album.objects.is_public().on_site()
 
 class AlbumDetailView(DetailView):
     queryset = Album.objects.is_public().on_site()
+
+class PhotoListView(ListView):
+    queryset = Photo.objects.on_site().is_public()
+    paginate_by = 20
+
+class PhotoDetailView(DetailView):
+    queryset = Photo.objects.on_site().is_public()
 
 def querydict_to_dict(query_dict):
     # request.POST only returns the first value in a list, this grabs it all

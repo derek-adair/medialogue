@@ -30,14 +30,14 @@ class BulkMediaFormTestCase(TestCase):
 
         self.assertEqual(self.multi_file_gallery['filepond'], form.cleaned_data['filepond'])
 
-    @pytest.mark.db
-    def test_bulk_media_form_throws_an_error_on_duplicate_gallery_name(self):
-        form1 = NewAlbumForm(self.min_gallery)
-        #form2 = NewAlbumForm(self.min_gallery)
-        if form1.is_valid():
-            form1.save()
-        #if form2.is_valid():
-            #form2.save()
+    #@pytest.mark.db
+    #def test_bulk_media_form_throws_an_error_on_duplicate_gallery_name(self):
+    #    form1 = NewAlbumForm(self.min_gallery)
+    #    form2 = NewAlbumForm(self.min_gallery)
+    #    if form1.is_valid():
+    #        form1.save()
+    #    if form2.is_valid():
+    #        form2.save()
 
     #def test_bulk_media_form_increments_title_slugs(self):
     #    self.assertEqual('finish test', '')
