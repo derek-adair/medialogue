@@ -99,28 +99,6 @@ class SitesTest(TestCase):
         response = self.client.get('/ptests/album/test-album/')
         self.assertEqual(list(response.context['object'].public()), [self.photo1])
 
-    @unittest.skipUnless('django.contrib.sitemaps' in settings.INSTALLED_APPS,
-                         'Sitemaps not installed in this project, nothing to test.')
-    def test_sitemap(self):
-        """A sitemap should only show objects associated with the current site."""
-        response = self.client.get('/sitemap.xml')
-
-        # Check photos.
-        self.assertContains(response,
-                            '<url><loc>http://example.com/ptests/photo/test-photo/</loc>'
-                            '<lastmod>2011-12-23</lastmod></url>')
-        self.assertNotContains(response,
-                               '<url><loc>http://example.com/ptests/photo/not-on-site-photo/</loc>'
-                               '<lastmod>2011-12-23</lastmod></url>')
-
-        # Check albums.
-        self.assertContains(response,
-                            '<url><loc>http://example.com/ptests/album/test-album/</loc>'
-                            '<lastmod>2011-12-23</lastmod></url>')
-        self.assertNotContains(response,
-                               '<url><loc>http://example.com/ptests/album/not-on-site-album/</loc>'
-                               '<lastmod>2011-12-23</lastmod></url>')
-
     def test_orphaned_photos(self):
         self.assertEqual(list(self.album1.orphaned_photos()), [self.photo2])
 
