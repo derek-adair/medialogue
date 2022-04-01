@@ -26,4 +26,4 @@ class RequestAlbumTest(TestCase):
         """Trivial test - if someone requests the root url of the app
         (i.e. /ptests/'), redirect them to the album list page."""
         response = self.client.get('/ptests/')
-        self.assertRedirects(response, '/ptests/album/', 301, 200)
+        self.assertRedirects(response, '/ptests/albums/', 301, 200)
