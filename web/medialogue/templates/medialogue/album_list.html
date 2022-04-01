@@ -12,17 +12,17 @@
 </div>
 
 {% if object_list %}
-{% for gallery in object_list.all %}
+{% for album in object_list.all %}
 <div class="row">
-    <div class="col-lg-12 gallery-sample">
-        <h2><a href="{{gallery.get_absolute_url}}">{{gallery.title}}</a></h2>
-        <p>{{gallery.date_added | date:"F d, Y"}}</p>
-	{% for photo in gallery.photos.all %}	
+    <div class="col-lg-12 album-sample">
+        <h2><a href="{{album.get_absolute_url}}">{{album.title}}</a></h2>
+        <p>{{album.date_added | date:"F d, Y"}}</p>
+	{% for photo in album.photos.all %}	
                 <a href="{{ photo.get_absolute_url }}">
-                    <img src="{{photo.get_thumbnail_url}}" class="img-thumbnail" width="100" />
+                    <img src="{{ photo.src.url }}" class="img-thumbnail" width="100" />
                 </a>
         {% endfor %}
-	{% for video in gallery.videos.all %}	
+	{% for video in album.videos.all %}	
          {% if video.thumbnail %}
 	    <a href="{{video.get_absolute_url }}"><img src="{{video.thumbnail.url }}"
                 class="img-thumbnail" width="100" /></a>

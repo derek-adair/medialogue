@@ -11,15 +11,11 @@ class RequestAlbumTest(TestCase):
         self.album = AlbumFactory(slug='test-album')
 
     def test_paginated_album_url_works(self):
-        response = self.client.get('/ptests/albumlist/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_album_works(self):
-        response = self.client.get('/ptests/album/test-album/')
+        response = self.client.get('/ptests/albums/')
         self.assertEqual(response.status_code, 200)
 
     def test_detail_album_works(self):
-        response = self.client.get('/ptests/album/2011/12/23/test-album/')
+        response = self.client.get('/ptests/album/test-album/')
         self.assertEqual(response.status_code, 200)
 
     def test_redirect_to_list(self):
