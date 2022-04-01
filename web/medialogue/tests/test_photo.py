@@ -48,16 +48,16 @@ class PhotoTest(MedialogueBaseTest):
     #        self.pl.get_testPhotoSize_url()
     #    self.assertEqual(self.pl.view_count, 5)
 
-    def test_quoted_url(self):
-        """Test for issue #29 - filenames of photos are incorrectly quoted when
-        building a URL."""
+    #def test_quoted_url(self):
+    #    """Test for issue #29 - filenames of photos are incorrectly quoted when
+    #    building a URL."""
 
-        # Create a Photo with a name that needs quoting.
-        self.pl2 = PhotoFactory(src__from_path=QUOTING_IMAGE_PATH)
-        quoted_string = 'test_medialogue_quoting_testPhotoSize.jpg'
-        self.assertIn(quoted_string,
-                      self.pl2.get_testPhotoSize_url(),
-                      self.pl2.get_testPhotoSize_url())
+    #    # Create a Photo with a name that needs quoting.
+    #    self.pl2 = PhotoFactory(src__from_path=QUOTING_IMAGE_PATH)
+    #    quoted_string = 'test_medialogue_quoting_testPhotoSize.jpg'
+    #    self.assertIn(quoted_string,
+    #                  self.pl2.get_testPhotoSize_url(),
+    #                  self.pl2.get_testPhotoSize_url())
 
     def test_unicode(self):
         """Trivial check that unicode titles work.

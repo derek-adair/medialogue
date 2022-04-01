@@ -1,4 +1,4 @@
-{% extends "root.html" %}
+{% extends "base.html" %}
 {% load medialogue_tags i18n %}
 
 
@@ -22,11 +22,11 @@
         {% if object.public_albums %}
         <p>{% trans "This photo is found in the following albums" %}:</p>
         <table>
-            {% for gallery in object.public_albums %}
+            {% for album in object.public_albums %}
             <tr>
-                <td>{% previous_in_gallery object gallery %}</td>
-                <td class="text-center"><a href="{{ gallery.get_absolute_url }}">{{ gallery.title }}</a></td>
-                <td>{% next_in_gallery object gallery %}</td>
+                <td>{% previous_in_album object album %}</td>
+                <td class="text-center"><a href="{{ album.get_absolute_url }}">{{ album.title }}</a></td>
+                <td>{% next_in_album object album %}</td>
             </tr>
             {% endfor %}
         </table>

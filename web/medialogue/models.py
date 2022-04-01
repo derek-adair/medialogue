@@ -20,10 +20,10 @@ from sortedm2m.fields import SortedManyToManyField
 import logging
 logger = logging.getLogger(__name__)
 
-# Default limit for gallery.latest
+# Default limit for album.latest
 LATEST_LIMIT = getattr(settings, 'MEDIALOGUE_GALLERY_LATEST_LIMIT', None)
 
-# Number of random images from the gallery to display.
+# Number of random images from the album to display.
 SAMPLE_SIZE = getattr(settings, 'MEDIALOGUE_GALLERY_SAMPLE_SIZE', 5)
 
 # max_length setting for the ImageModel ImageField
@@ -159,6 +159,38 @@ class Photo(models.Model):
         super().__init__(*args, **kwargs)
         self._old_src = self.src
 
+    def get_previous_in_album(self, album):
+        """Find the neighbour of this photo in the supplied album.
+        We assume that the album and all its photos are on the same site.
+        """
+        if not self.is_public:
+            raise ValueError('Cannot determine neighbours of a non-public photo.')
+        photos = album.photos.is_public()
+        if self not in photos:
+            raise ValueError('Photo does not belong to album.')
+        previous = None
+        for photo in photos:
+            if photo == self:
+                return previous
+            previous = photo
+
+    def get_next_in_album(self, album):
+        """Find the neighbour of this photo in the supplied album.
+        We assume that the album and all its photos are on the same site.
+        """
+        if not self.is_public:
+            raise ValueError('Cannot determine neighbours of a non-public photo.')
+        photos = album.photos.is_public()
+        if self not in photos:
+            raise ValueError('Photo does not belong to album.')
+        matched = False
+        for photo in photos:
+            if matched:
+                return photo
+            if photo == self:
+                matched = True
+        return None
+
     def save(self, *args, **kwargs):
         image_has_changed = False
         if self._get_pk_val() and (self._old_src != self.src):
@@ -276,7 +308,7 @@ class Album(models.Model):
                 return self.photos.filter(sites__id=settings.SITE_ID)[:limit]
 
     def public(self):
-        """Return a queryset of all the public photos in this gallery."""
+        """Return a queryset of all the public photos in this album."""
         return self.photos.is_public().filter(sites__id=settings.SITE_ID)
 
     def sample(self, count=None, public=True):
@@ -295,7 +327,7 @@ class Album(models.Model):
                     return random.sample(set(photo_set), count)
 
     def photo_count(self, public=True):
-        """Return a count of all the photos in this gallery."""
+        """Return a count of all the photos in this album."""
         if public:
             return self.public().count()
         else:
@@ -304,13 +336,13 @@ class Album(models.Model):
     photo_count.short_description = _('count')
 
     def public(self):
-        """Return a queryset of all the public photos in this gallery."""
+        """Return a queryset of all the public photos in this album."""
         return self.photos.is_public().filter(sites__id=settings.SITE_ID)
 
     def orphaned_photos(self):
         """
-        Return all photos that belong to this gallery but don't share the
-        gallery's site.
+        Return all photos that belong to this album but don't share the
+        album's site.
         """
         return self.photos.filter(is_public=True) \
                 .exclude(sites__id__in=self.sites.all())
