@@ -24,11 +24,11 @@ class SitesTest(TestCase):
 
         with self.settings(MEDIALOGUE_MULTISITE=True):
             # Be explicit about linking Albums/Photos to Sites."""
-            self.gallery1 = AlbumFactory(slug='test-gallery', sites=[self.site1])
-            self.gallery2 = AlbumFactory(slug='not-on-site-gallery')
+            self.album1 = AlbumFactory(slug='test-album', sites=[self.site1])
+            self.album2 = AlbumFactory(slug='not-on-site-album')
             self.photo1 = PhotoFactory(slug='test-photo', sites=[self.site1])
             self.photo2 = PhotoFactory(slug='not-on-site-photo')
-            self.gallery1.photos.add(self.photo1, self.photo2)
+            self.album1.photos.add(self.photo1, self.photo2)
 
         # I'd like to use factory_boy's mute_signal decorator but that
         # will only available once factory_boy 2.4 is released. So long
@@ -37,14 +37,14 @@ class SitesTest(TestCase):
 
     def tearDown(self):
         super(SitesTest, self).tearDown()
-        self.gallery1.delete()
-        self.gallery2.delete()
+        self.album1.delete()
+        self.album2.delete()
         self.photo1.delete()
         self.photo2.delete()
 
     def test_basics(self):
         """ See if objects were added automatically (by the factory) to the current site. """
-        self.assertEqual(list(self.gallery1.sites.all()), [self.site1])
+        self.assertEqual(list(self.album1.sites.all()), [self.site1])
         self.assertEqual(list(self.photo1.sites.all()), [self.site1])
 
     def test_auto_add_sites(self):
@@ -54,30 +54,30 @@ class SitesTest(TestCase):
         """
 
         with self.settings(MEDIALOGUE_MULTISITE=False):
-            gallery = AlbumFactory()
+            album = AlbumFactory()
             photo = PhotoFactory()
-        self.assertEqual(list(gallery.sites.all()), [self.site1])
+        self.assertEqual(list(album.sites.all()), [self.site1])
         self.assertEqual(list(photo.sites.all()), [self.site1])
 
         photo.delete()
 
         with self.settings(MEDIALOGUE_MULTISITE=True):
-            gallery = AlbumFactory()
+            album = AlbumFactory()
             photo = PhotoFactory()
-        self.assertEqual(list(gallery.sites.all()), [])
+        self.assertEqual(list(album.sites.all()), [])
         self.assertEqual(list(photo.sites.all()), [])
 
         photo.delete()
 
-    def test_gallery_list(self):
-        response = self.client.get('/ptests/gallerylist/')
-        self.assertEqual(list(response.context['object_list']), [self.gallery1])
+    def test_album_list(self):
+        response = self.client.get('/ptests/albums/')
+        self.assertEqual(list(response.context['object_list']), [self.album1])
 
-    def test_gallery_detail(self):
-        response = self.client.get('/ptests/gallery/test-gallery/')
-        self.assertEqual(response.context['object'], self.gallery1)
+    def test_album_detail(self):
+        response = self.client.get('/ptests/album/test-album/')
+        self.assertEqual(response.context['object'], self.album1)
 
-        response = self.client.get('/ptests/gallery/not-on-site-gallery/')
+        response = self.client.get('/ptests/album/not-on-site-album/')
         self.assertEqual(response.status_code, 404)
 
     def test_photo_list(self):
@@ -95,12 +95,12 @@ class SitesTest(TestCase):
         response = self.client.get('/ptests/photo/')
         self.assertEqual(list(response.context['object_list']), [self.photo1])
 
-    def test_photos_in_gallery(self):
+    def test_photos_in_album(self):
         """
-        Only those photos are supposed to be shown in a gallery that are
+        Only those photos are supposed to be shown in a album that are
         also associated with the current site.
         """
-        response = self.client.get('/ptests/gallery/test-gallery/')
+        response = self.client.get('/ptests/album/test-album/')
         self.assertEqual(list(response.context['object'].public()), [self.photo1])
 
     @unittest.skipUnless('django.contrib.sitemaps' in settings.INSTALLED_APPS,
@@ -119,21 +119,21 @@ class SitesTest(TestCase):
 
         # Check albums.
         self.assertContains(response,
-                            '<url><loc>http://example.com/ptests/gallery/test-gallery/</loc>'
+                            '<url><loc>http://example.com/ptests/album/test-album/</loc>'
                             '<lastmod>2011-12-23</lastmod></url>')
         self.assertNotContains(response,
-                               '<url><loc>http://example.com/ptests/gallery/not-on-site-gallery/</loc>'
+                               '<url><loc>http://example.com/ptests/album/not-on-site-album/</loc>'
                                '<lastmod>2011-12-23</lastmod></url>')
 
     def test_orphaned_photos(self):
-        self.assertEqual(list(self.gallery1.orphaned_photos()), [self.photo2])
+        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo2])
 
-        self.gallery2.photos.add(self.photo2)
-        self.assertEqual(list(self.gallery1.orphaned_photos()), [self.photo2])
+        self.album2.photos.add(self.photo2)
+        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo2])
 
-        self.gallery1.sites.clear()
-        self.assertEqual(list(self.gallery1.orphaned_photos()), [self.photo1, self.photo2])
+        self.album1.sites.clear()
+        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo1, self.photo2])
 
         self.photo1.sites.clear()
         self.photo2.sites.clear()
-        self.assertEqual(list(self.gallery1.orphaned_photos()), [self.photo1, self.photo2])
+        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo1, self.photo2])
