@@ -24,7 +24,7 @@ class RequestPhotoTest(TestCase):
         response = self.client.get('/ptests/photos/')
         self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(response.context['latest'].count(),
+        self.assertEqual(response.context['object_list'].count(),
                          0)
 
     def test_paginated_photo_url_works(self):

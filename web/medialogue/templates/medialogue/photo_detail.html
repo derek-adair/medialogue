@@ -16,7 +16,7 @@
 <div class="row">
     <div class="col-md-6">
         {% if object.caption %}<p>{{ object.caption|safe }}</p>{% endif %}
-        <img src="{{ object.get_display_url }}" class="img-thumbnail" alt="{{ object.title }}">
+        <img src="{{ object.src.url }}" class="img-thumbnail" alt="{{ object.title }}">
     </div>
     <div class="col-md-6">
         {% if object.public_albums %}

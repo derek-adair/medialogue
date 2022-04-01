@@ -191,6 +191,9 @@ class Photo(models.Model):
                 matched = True
         return None
 
+    def get_absolute_url(self):
+        return reverse('medialogue:ml-photo', args=[self.slug])
+
     def save(self, *args, **kwargs):
         image_has_changed = False
         if self._get_pk_val() and (self._old_src != self.src):
