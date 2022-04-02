@@ -15,7 +15,7 @@ urlpatterns = [
         path('album/new/', NewAlbum, name='new-album'),
         re_path('album/(?P<slug>[\-\d\w]+)/$', AlbumDetailView.as_view(), name='ml-album'),
         re_path('video/(?P<slug>[\-\d\w]+)/$', VideoDetailView.as_view(), name='ml-video'),
-        path('photos/', PhotoListView.as_view(), name='photo-list'),
+        path('photos/', PhotoListView.as_view(), name='ml-photo-list'),
         re_path('^photo/(?P<slug>[\-\d\w]+)/$', PhotoDetailView.as_view(), name='ml-photo'),
         path('fp/', include('django_drf_filepond.urls')),
 ]
