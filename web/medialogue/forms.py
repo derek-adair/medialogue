@@ -54,8 +54,7 @@ class MediaForm(forms.Form):
         for upload_id in filelist:
             logger.debug('Reading file "{}".'.format(upload_id))
 
-            su = store_upload(upload_id,
-                    destination_file_path="medialogue/{}".format(upload_id))
+            su = store_upload(upload_id, destination_file_path=upload_id)
 
             (filename, data) = get_stored_upload_file_data(su)
             if not len(data):
