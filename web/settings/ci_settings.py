@@ -9,4 +9,3 @@ DATABASES = {
             }
         }
 
-DJANGO_DRF_FILEPOND_UPLOAD_TMP = str(BASE_DIR / 'fixtures')
