@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 from pkg_resources import parse_requirements
 
-version = "1.0.0"
+version = "1.0.1"
 
 def get_requirements(source):
     with open(source) as f:
@@ -16,7 +16,7 @@ def package_files(directory):
             paths.append(os.path.join('..', path, filename))
     return paths
 
-package_data = package_files('medialogue/migrations') + package_files('medialogue/templates') + package_files('medialogue/static')
+package_data = package_files('medialogue/migrations') + package_files('medialogue/templates') + package_files('medialogue/static') + package_files('medialogue/templatetags')
 
 setup(
     name='django-medialogue',
