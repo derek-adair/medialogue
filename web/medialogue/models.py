@@ -49,7 +49,7 @@ if MEDIALOGUE_PATH is not None:
 else:
     def get_storage_path(instance, filename):
         fn = unicodedata.normalize('NFKD', force_str(filename)).encode('ascii', 'ignore').decode('ascii')
-        return os.path.join(MEDIALOGUE_DIR, 'photos', fn)
+        return os.path.join(MEDIALOGUE_DIR, '', fn)
 
 # Exif Orientation values
 # Value 0thRow	0thColumn
