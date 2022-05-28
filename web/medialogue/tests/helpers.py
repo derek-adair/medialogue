@@ -14,9 +14,8 @@ class MedialogueBaseTest(TestCase):
         except NameError:
             # Doesn't exist in Python 2.7.
             pass
-        self.pl = PhotoFactory(title='Landscape',
-                               slug='landscape')
+        self.pl = PhotoFactory(title='Landscape', slug='landscape')
 
     def tearDown(self):
         # Need to manually remove the files created during testing.
-        self.pl.delete()
+        self.pl.src.delete()

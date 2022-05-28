@@ -13,7 +13,7 @@ class RequestPhotoTest(TestCase):
 
     def tearDown(self):
         super(RequestPhotoTest, self).tearDown()
-        self.photo.delete()
+        self.photo.src.delete()
 
     def test_archive_photo_empty(self):
         """If there are no photo to show, tell the visitor - don't show a

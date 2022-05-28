@@ -22,7 +22,7 @@ class PhotoTest(MedialogueBaseTest):
         """Delete any extra test files (if created)."""
         super(PhotoTest, self).tearDown()
         try:
-            self.pl2.delete()
+            self.pl2.src.delete()
         except:
             pass
 
@@ -76,7 +76,7 @@ class PhotoManagerTest(MedialogueBaseTest):
 
     def tearDown(self):
         super(PhotoManagerTest, self).tearDown()
-        self.pl2.delete()
+        self.pl2.src.delete()
 
     def test_public(self):
         """Method 'is_public' should only return photos flagged as public."""

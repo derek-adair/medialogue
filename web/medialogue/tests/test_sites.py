@@ -39,8 +39,8 @@ class SitesTest(TestCase):
         super(SitesTest, self).tearDown()
         self.album1.delete()
         self.album2.delete()
-        self.photo1.delete()
-        self.photo2.delete()
+        self.photo1.src.delete()
+        self.photo2.src.delete()
 
     def test_basics(self):
         """ See if objects were added automatically (by the factory) to the current site. """
@@ -59,7 +59,8 @@ class SitesTest(TestCase):
         self.assertEqual(list(album.sites.all()), [self.site1])
         self.assertEqual(list(photo.sites.all()), [self.site1])
 
-        photo.delete()
+        # Gotta manually delete these
+        photo.src.delete()
 
         with self.settings(MEDIALOGUE_MULTISITE=True):
             album = AlbumFactory()
@@ -67,7 +68,8 @@ class SitesTest(TestCase):
         self.assertEqual(list(album.sites.all()), [])
         self.assertEqual(list(photo.sites.all()), [])
 
-        photo.delete()
+        # Gotta manually delete these
+        photo.src.delete()
 
     def test_album_list(self):
         response = self.client.get('/ptests/albums/')
