@@ -16,7 +16,7 @@
         {% if object.caption %}<p>{{ object.caption|safe }}</p>{% endif %}
             <video controls autoplay class="img-thumbnail" alt="{{ object.title }}">
                 {% for format in object.format_set.all %}
-                    <source src="{{format.src.url }}" />
+                    <source src="{{format.file.url }}" />
                 {% endfor %}
             </video>
     </div>
