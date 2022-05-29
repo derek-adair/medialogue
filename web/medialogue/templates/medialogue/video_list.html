@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "All videos" %}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1>{% trans "All videos" %}</h1>
+    </div>
+</div>
+{% if object_list %}
+<div class="row">
+    <div class="col-lg-12 photo-list">
+        {% for video in object_list %}
+             <a href="{{video.get_absolute_url }}" ><img src="{{video.thumbnail.url }}"
+                 class="img-thumbnail" width="200" /></a>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="row">{% trans "No photos were found" %}.</div>
+{% endif %}
+
+{% endblock %}

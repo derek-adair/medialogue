@@ -18,6 +18,10 @@ class PhotoListView(ListView):
     queryset = Photo.objects.on_site().is_public()
     paginate_by = 20
 
+class VideoListView(ListView):
+    queryset = Video.objects.on_site().is_public()
+    paginate_by = 20
+
 class PhotoDetailView(DetailView):
     queryset = Photo.objects.on_site().is_public()
 
