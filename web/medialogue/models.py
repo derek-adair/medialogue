@@ -82,23 +82,6 @@ JPEG_QUALITY_CHOICES = (
     (90, _('Very High')),
 )
 
-# choices for new crop_anchor field in Photo
-CROP_ANCHOR_CHOICES = (
-    ('top', _('Top')),
-    ('right', _('Right')),
-    ('bottom', _('Bottom')),
-    ('left', _('Left')),
-    ('center', _('Center (Default)')),
-)
-
-IMAGE_TRANSPOSE_CHOICES = (
-    ('FLIP_LEFT_RIGHT', _('Flip left to right')),
-    ('FLIP_TOP_BOTTOM', _('Flip top to bottom')),
-    ('ROTATE_90', _('Rotate 90 degrees counter-clockwise')),
-    ('ROTATE_270', _('Rotate 90 degrees clockwise')),
-    ('ROTATE_180', _('Rotate 180 degrees')),
-)
-
 class SharedQueries(models.query.QuerySet):
     def on_site(self):
         """Return objects linked to the current site only."""
