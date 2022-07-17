@@ -89,12 +89,7 @@ class SharedQueries(models.query.QuerySet):
     def is_public(self):
         return self.filter(is_public=True)
 
-class Photo(models.Model):
-    src = models.ImageField(
-        _('src'),
-        max_length=IMAGE_FIELD_MAX_LENGTH,
-        upload_to=get_storage_path,
-    )
+class Media(models.Model):
     date_taken = models.DateTimeField(
         _('date taken'),
         null=True,
@@ -119,13 +114,54 @@ class Photo(models.Model):
         default=True,
         help_text=_('Public photographs will be displayed in the default views.'),
     )
+
     sites = models.ManyToManyField(
         Site,
         verbose_name=_('sites'),
         blank=True,
     )
-
     objects = SharedQueries.as_manager()
+
+#    def get_previous_in_album(self, album):
+#        """Find the neighbour of this photo in the supplied album.
+#        We assume that the album and all its photos are on the same site.
+#        """
+#        if not self.is_public:
+#            raise ValueError('Cannot determine neighbours of a non-public photo.')
+#        photos = album.photos.is_public()
+#        if self not in photos:
+#            raise ValueError('Photo does not belong to album.')
+#        previous = None
+#        for photo in photos:
+#            if photo == self:
+#                return previous
+#            previous = photo
+#
+#    def get_next_in_album(self, album):
+#        """Find the neighbour of this photo in the supplied album.
+#        We assume that the album and all its photos are on the same site.
+#        """
+#        if not self.is_public:
+#            raise ValueError('Cannot determine neighbours of a non-public photo.')
+#        photos = album.photos.is_public()
+#        if self not in photos:
+#            raise ValueError('Photo does not belong to album.')
+#        matched = False
+#        for photo in photos:
+#            if matched:
+#                return photo
+#            if photo == self:
+#                matched = True
+#        return None
+
+
+class Photo(Media):
+    objects = SharedQueries.as_manager()
+    src = models.ImageField(
+        _('src'),
+        max_length=IMAGE_FIELD_MAX_LENGTH,
+        upload_to=get_storage_path,
+    )
 
     def EXIF(self, file=None):
         try:
@@ -141,38 +177,6 @@ class Photo(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._old_src = self.src
-
-    def get_previous_in_album(self, album):
-        """Find the neighbour of this photo in the supplied album.
-        We assume that the album and all its photos are on the same site.
-        """
-        if not self.is_public:
-            raise ValueError('Cannot determine neighbours of a non-public photo.')
-        photos = album.photos.is_public()
-        if self not in photos:
-            raise ValueError('Photo does not belong to album.')
-        previous = None
-        for photo in photos:
-            if photo == self:
-                return previous
-            previous = photo
-
-    def get_next_in_album(self, album):
-        """Find the neighbour of this photo in the supplied album.
-        We assume that the album and all its photos are on the same site.
-        """
-        if not self.is_public:
-            raise ValueError('Cannot determine neighbours of a non-public photo.')
-        photos = album.photos.is_public()
-        if self not in photos:
-            raise ValueError('Photo does not belong to album.')
-        matched = False
-        for photo in photos:
-            if matched:
-                return photo
-            if photo == self:
-                matched = True
-        return None
 
     def get_absolute_url(self):
         return reverse('medialogue:ml-photo', args=[self.slug])
@@ -197,29 +201,14 @@ class Photo(models.Model):
                 logger.error('Failed to read EXIF DateTimeOriginal', exc_info=True)
         super().save(*args, **kwargs)
 
-class Video(models.Model):
+class Video(Media):
     """
     NOTE -  Calls post_save connected in apps.py/signals.py
     - medialogue.tasks.create_thumbnail 
     - django_video_encoding.tasks.convert_all_videos
     """
     objects = SharedQueries.as_manager()
-    # Meta Fields
-    title = models.CharField(max_length=250)
-    slug = models.SlugField(
-        unique=True,
-        max_length=250,
-        help_text='A "slug" is a unique URL-friendly title for an object.'
-    )
-    caption = models.TextField(blank=True)
-    is_public = models.BooleanField(default=True)
-    date_added = models.DateTimeField(default=now)
     thumbnail = models.ImageField(blank=True)
-    sites = models.ManyToManyField(
-        Site,
-        verbose_name='sites',
-        blank=True
-    )
     format_set = GenericRelation(Format)
     # video detail fields
     width = models.PositiveIntegerField(editable=False, null=True)
@@ -238,10 +227,10 @@ class Video(models.Model):
         return self.title
 
 class Album(models.Model):
-    videos = SortedManyToManyField(
-        'medialogue.Video',
+    media = SortedManyToManyField(
+        'medialogue.Media',
         related_name='albums',
-        verbose_name=('videos'),
+        verbose_name=('media'),
         blank=True,
     )
     date_added = models.DateTimeField(_('date published'), default=now)
@@ -262,12 +251,6 @@ class Album(models.Model):
         default=True,
         help_text=_('Public albums will be displayed in the default views.'),
     )
-    photos = SortedManyToManyField(
-        'medialogue.Photo',
-        related_name='albums',
-        verbose_name=_('photos'),
-        blank=True,
-    )
     sites = models.ManyToManyField(
         Site,
         verbose_name=_('sites'),
@@ -287,15 +270,15 @@ class Album(models.Model):
 
     def latest(self, limit=LATEST_LIMIT, public=True):
         if not limit:
-            limit = self.photo_count()
+            limit = self.media_count()
             if public:
                 return self.public()[:limit]
             else:
-                return self.photos.filter(sites__id=settings.SITE_ID)[:limit]
+                return self.media.filter(sites__id=settings.SITE_ID)[:limit]
 
     def public(self):
         """Return a queryset of all the public photos in this album."""
-        return self.photos.is_public().filter(sites__id=settings.SITE_ID)
+        return self.media.is_public().filter(sites__id=settings.SITE_ID)
 
     def sample(self, count=None, public=True):
         """Return a sample of photos, ordered at random.
@@ -312,25 +295,25 @@ class Album(models.Model):
                     photo_set = self.photos.filter(sites__id=settings.SITE_ID)
                     return random.sample(set(photo_set), count)
 
-    def photo_count(self, public=True):
+    def media_count(self, public=True):
         """Return a count of all the photos in this album."""
         if public:
             return self.public().count()
         else:
-            return self.photos.filter(sites__id=settings.SITE_ID).count()
+            return self.media.filter(sites__id=settings.SITE_ID).count()
 
-    photo_count.short_description = _('count')
+    media_count.short_description = _('count')
 
     def public(self):
         """Return a queryset of all the public photos in this album."""
-        return self.photos.is_public().filter(sites__id=settings.SITE_ID)
+        return self.media.is_public().filter(sites__id=settings.SITE_ID)
 
     def orphaned_photos(self):
         """
         Return all photos that belong to this album but don't share the
         album's site.
         """
-        return self.photos.filter(is_public=True) \
+        return self.media.filter(is_public=True) \
                 .exclude(sites__id__in=self.sites.all())
 
     def get_absolute_url(self):

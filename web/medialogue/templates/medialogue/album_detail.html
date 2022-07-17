@@ -12,18 +12,18 @@
     </div>
 </div>
 
-{% if object.photos or object.videos %}
+{% if object.media %}
             <div class="grid">
-            {% for photo in object.photos.all %}
+            {% for media in object.media.all %}
+            {% if media.video.thumbnail %}
+            <div class="grid-item "><a href="{{media.video.get_absolute_url }}" ><img
+                    src="{{media.video.thumbnail.url }}" class="img-thumbnail video" width="200" /></a></div>
+             {% else %}
                 <div class="grid-item">
-                    <a href="{{ photo.get_absolute_url }}" >
-                        <img src="{{photo.src.url}}" class="img-thumbnail" width="200" /></li>
+                    <a href="{{ media.photo.get_absolute_url }}" >
+                        <img src="{{media.photo.src.url}}" class="img-thumbnail photo" width="200" /></li>
                     </a>
                 </div>
-            {% endfor %}
-            {% for video in object.videos.all %}
-             {% if video.thumbnail %}
-             <div class="grid-item "><a href="{{video.get_absolute_url }}" ><img src="{{video.thumbnail.url }}" class="img-thumbnail" width="200" /></a></div>
                 {% endif %}
             {% endfor %}
 {% else %}

@@ -82,14 +82,14 @@ class MediaForm(forms.Form):
                 photo.src = "medialogue/{}".format(upload_id)
                 photo.save()
                 photo.sites.add(CURRENT_SITE)
-                gallery.photos.add(photo)
+                gallery.media.add(photo)
             elif file_mimetype == "video":
                 logger.info("video mimetype detected")
                 video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'])
                 video.src = "medialogue/{}".format(upload_id)
                 video.save()
                 video.sites.add(CURRENT_SITE)
-                gallery.videos.add(video)
+                gallery.media.add(video)
             else:
                 logger.error('cound not process file "{}"'.format(filename))
         return gallery.slug

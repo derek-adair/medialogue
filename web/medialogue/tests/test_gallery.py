@@ -10,8 +10,8 @@ class AlbumTest(MedialogueBaseTest):
         super(AlbumTest, self).setUp()
         self.test_album = AlbumFactory()
         self.pl2 = PhotoFactory()
-        self.test_album.photos.add(self.pl)
-        self.test_album.photos.add(self.pl2)
+        self.test_album.media.add(self.pl)
+        self.test_album.media.add(self.pl2)
 
     def tearDown(self):
         super(AlbumTest, self).tearDown()
@@ -24,16 +24,16 @@ class AlbumTest(MedialogueBaseTest):
         self.pl.save()
         self.assertEqual(self.test_album.public().count(), 1)
 
-    def test_photo_count(self):
+    def test_media_count(self):
         """Method 'photo_count' should return the count of the photos in this
         album."""
-        self.assertEqual(self.test_album.photo_count(), 2)
+        self.assertEqual(self.test_album.media_count(), 2)
         self.pl.is_public = False
         self.pl.save()
-        self.assertEqual(self.test_album.photo_count(), 1)
+        self.assertEqual(self.test_album.media_count(), 1)
 
         # Method takes an optional 'public' kwarg.
-        self.assertEqual(self.test_album.photo_count(public=False), 2)
+        self.assertEqual(self.test_album.media_count(public=False), 2)
 
     #def test_sample(self):
     #    """Method 'sample' should return a random queryset of photos from the
