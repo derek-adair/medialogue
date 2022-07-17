@@ -17,19 +17,23 @@
     <div class="col-lg-12 album-sample">
         <h2><a href="{{album.get_absolute_url}}">{{album.title}}</a></h2>
         <p>{{album.date_added | date:"F d, Y"}}</p>
-	{% for photo in album.photos.all %}	
-                <a href="{{ photo.get_absolute_url }}">
-                    <img src="{{ photo.src.url }}" class="img-thumbnail" width="100" />
+        <div class="grid">
+        {% for media in album.media.all %}
+            {% if media.video.thumbnail %}
+            <div class="grid-item ">
+                <a href="{{media.video.get_absolute_url }}" >
+                    <img src="{{media.video.thumbnail.url }}" class="img-thumbnail video" width="200" />
                 </a>
-        {% endfor %}
-	{% for video in album.videos.all %}	
-         {% if video.thumbnail %}
-	    <a href="{{video.get_absolute_url }}"><img src="{{video.thumbnail.url }}"
-                class="img-thumbnail" width="100" /></a>
+            </div>
+            {% else %}
+            <div class="grid-item">
+                <a href="{{ media.photo.get_absolute_url }}" >
+                    <img src="{{media.photo.src.url}}" class="img-thumbnail photo" width="200" /></li>
+                </a>
+            </div>
             {% endif %}
-        {% endfor %}
+         {% endfor %}
     </div>
-</div>
 {% endfor %}
 {% else %}
 <div class="row">
