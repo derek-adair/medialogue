@@ -122,37 +122,48 @@ class Media(models.Model):
     )
     objects = SharedQueries.as_manager()
 
-#    def get_previous_in_album(self, album):
-#        """Find the neighbour of this photo in the supplied album.
-#        We assume that the album and all its photos are on the same site.
-#        """
-#        if not self.is_public:
-#            raise ValueError('Cannot determine neighbours of a non-public photo.')
-#        photos = album.photos.is_public()
-#        if self not in photos:
-#            raise ValueError('Photo does not belong to album.')
-#        previous = None
-#        for photo in photos:
-#            if photo == self:
-#                return previous
-#            previous = photo
-#
-#    def get_next_in_album(self, album):
-#        """Find the neighbour of this photo in the supplied album.
-#        We assume that the album and all its photos are on the same site.
-#        """
-#        if not self.is_public:
-#            raise ValueError('Cannot determine neighbours of a non-public photo.')
-#        photos = album.photos.is_public()
-#        if self not in photos:
-#            raise ValueError('Photo does not belong to album.')
-#        matched = False
-#        for photo in photos:
-#            if matched:
-#                return photo
-#            if photo == self:
-#                matched = True
-#        return None
+    def get_previous_in_album(self, album):
+        """Find the neighbour of this media object in the supplied album.
+        We assume that the album and all its objects are on the same site.
+        """
+        if not self.is_public:
+            raise ValueError('Cannot determine neighbours of a non-public media.')
+        media = album.media.is_public()
+
+        # TODO - issues with Photo/Video/Media objects.  self will look like Photo(I) while 
+        # The media queryset will look like [Media(I)]
+        #if self not in media:
+        #    raise ValueError('media does not belong to album.')
+
+        previous = None
+        for m in media:
+            if m.id == self.id:
+                return previous
+            previous = m
+
+    def get_next_in_album(self, album):
+        """Find the neighbour of this media object in the supplied album.
+        We assume that the album and all its objects are on the same site.
+        """
+        if not self.is_public:
+            raise ValueError('Cannot determine neighbours of a non-public media.')
+        media = album.media.is_public()
+
+        # TODO - issues with Photo/Video/Media objects.  self will look like Photo(I) while 
+        # The media queryset will look like [Media(I)]
+        #if self not in media:
+        #    raise ValueError('media does not belong to album.')
+        #if self not in media:
+        #    raise ValueError('Photo does not belong to album.')
+
+        matched = False
+
+        for m in media:
+            if matched:
+                return m
+            if m.id == self.id:
+                matched = True
+        return None
 
 
 class Photo(Media):
@@ -277,12 +288,12 @@ class Album(models.Model):
                 return self.media.filter(sites__id=settings.SITE_ID)[:limit]
 
     def public(self):
-        """Return a queryset of all the public photos in this album."""
+        """Return a queryset of all the public media in this album."""
         return self.media.is_public().filter(sites__id=settings.SITE_ID)
 
     def sample(self, count=None, public=True):
-        """Return a sample of photos, ordered at random.
-        If the 'count' is not specified, it will return a number of photos
+        """Return a sample of media, ordered at random.
+        If the 'count' is not specified, it will return a number of media
         limited by the GALLERY_SAMPLE_SIZE setting.
         """
         if not count:
@@ -292,11 +303,11 @@ class Album(models.Model):
                 if public:
                     photo_set = self.public()
                 else:
-                    photo_set = self.photos.filter(sites__id=settings.SITE_ID)
+                    photo_set = self.media.filter(sites__id=settings.SITE_ID)
                     return random.sample(set(photo_set), count)
 
     def media_count(self, public=True):
-        """Return a count of all the photos in this album."""
+        """Return a count of all the media in this album."""
         if public:
             return self.public().count()
         else:
@@ -305,12 +316,12 @@ class Album(models.Model):
     media_count.short_description = _('count')
 
     def public(self):
-        """Return a queryset of all the public photos in this album."""
+        """Return a queryset of all the public media in this album."""
         return self.media.is_public().filter(sites__id=settings.SITE_ID)
 
-    def orphaned_photos(self):
+    def orphaned_media(self):
         """
-        Return all photos that belong to this album but don't share the
+        Return all media that belong to this album but don't share the
         album's site.
         """
         return self.media.filter(is_public=True) \

@@ -8,13 +8,13 @@ register = template.Library()
 
 
 @register.inclusion_tag('medialogue/tags/next_in_album.html')
-def next_in_album(photo, album):
-    return {'photo': photo.get_next_in_album(album)}
+def next_in_album(media, album):
+    return {'media': media.get_next_in_album(album)}
 
 
 @register.inclusion_tag('medialogue/tags/prev_in_album.html')
-def previous_in_album(photo, album):
-    return {'photo': photo.get_previous_in_album(album)}
+def previous_in_album(media, album):
+    return {'media': media.get_previous_in_album(album)}
 
 
 @register.simple_tag

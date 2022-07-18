@@ -1,0 +1,10 @@
+{% if media %}
+{% if media.video.thumbnail %}
+<a title="{{ media.title }}" href="{{ media.video.get_absolute_url }}">
+    <img src="{{ media.video.src.url }}" class="img-thumbnail" alt="{{ media.title }}"/>
+{% else %}
+<a title="{{ media.title }}" href="{{ media.photo.get_absolute_url }}">
+    <img src="{{ media.photo.src.url }}" class="img-thumbnail" alt="{{ media.title }}"/>
+{% endif %}
+</a>
+{% endif %}
