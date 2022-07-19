@@ -20,7 +20,6 @@
     </div>
     <div class="col-md-6">
         {% if object.albums %}
-        <p>{% trans "This photo is found in the following albums" %}:</p>
         <table>
             {% for album in object.albums.all %}
             <tr>

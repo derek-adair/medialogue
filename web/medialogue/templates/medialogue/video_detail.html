@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load medialogue_tags i18n %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -14,11 +15,24 @@
 <div class="row">
     <div class="col-md-6">
         {% if object.caption %}<p>{{ object.caption|safe }}</p>{% endif %}
-            <video controls autoplay class="img-thumbnail" alt="{{ object.title }}">
-                {% for format in object.format_set.all %}
-                    <source src="{{format.file.url }}" />
-                {% endfor %}
-            </video>
+        <video controls autoplay class="img-thumbnail" alt="{{ object.title }}">
+            {% for format in object.format_set.all %}
+                <source src="{{format.file.url }}" />
+            {% endfor %}
+        </video>
+    </div>
+    <div class="col-md-6">
+        {% if object.albums %}
+        <table>
+            {% for album in object.albums.all %}
+            <tr>
+                <td>{% previous_in_album object album %}</td>
+                <td class="text-center"><a href="{{ album.get_absolute_url }}">{{ album.title }}</a></td>
+                <td>{% next_in_album object album %}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
     </div>
 </div>
 
