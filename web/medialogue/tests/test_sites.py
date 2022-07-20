@@ -94,25 +94,23 @@ class SitesTest(TestCase):
         response = self.client.get('/ptests/photo/not-on-site-photo/')
         self.assertEqual(response.status_code, 404)
 
-# @TODO - need to refucktor the factories to be "media factories" for the next two commented out
-# tests
-#    def test_photos_in_album(self):
-#        """
-#        Only those photos are supposed to be shown in a album that are
-#        also associated with the current site.
-#        """
-#        response = self.client.get('/ptests/album/test-album/')
-#
-#        self.assertEqual(list(response.context['object'].public()), [self.photo1])
-#    def test_orphaned_photos(self):
-#        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo2])
-#
-#        self.album2.photos.add(self.photo2)
-#        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo2])
-#
-#        self.album1.sites.clear()
-#        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo1, self.photo2])
-#
-#        self.photo1.sites.clear()
-#        self.photo2.sites.clear()
-#        self.assertEqual(list(self.album1.orphaned_photos()), [self.photo1, self.photo2])
+    def test_photos_in_album(self):
+        """
+        Only those photos are supposed to be shown in a album that are
+        also associated with the current site.
+        """
+        response = self.client.get('/ptests/album/test-album/')
+
+        self.assertEqual(list(response.context['object'].public()), [self.photo1.media_ptr])
+    def test_orphaned_media(self):
+        self.assertEqual(list(self.album1.orphaned_media()), [self.photo2.media_ptr])
+
+        self.album2.media.add(self.photo2)
+        self.assertEqual(list(self.album1.orphaned_media()), [self.photo2.media_ptr])
+
+        self.album1.sites.clear()
+        self.assertEqual(list(self.album1.orphaned_media()), [self.photo1.media_ptr, self.photo2.media_ptr])
+
+        self.photo1.sites.clear()
+        self.photo2.sites.clear()
+        self.assertEqual(list(self.album1.orphaned_media()), [self.photo1.media_ptr, self.photo2.media_ptr])

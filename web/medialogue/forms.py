@@ -40,12 +40,12 @@ class MediaForm(forms.Form):
                                    initial=True,
                                    required=False,
                                    help_text=_('Uncheck this to make the uploaded '
-                                               'gallery and included photographs private.'))
+                                               'album and included photographs private.'))
     filepond = SimpleArrayField(forms.CharField(max_length=255), widget=forms.HiddenInput(),
            required=False)
 
 
-    def save(self, gallery):
+    def save(self, album):
         filelist = self.cleaned_data['filepond']
         CURRENT_SITE = Site.objects.get(id=settings.SITE_ID)
 
@@ -61,7 +61,7 @@ class MediaForm(forms.Form):
                 logger.debug('File "{}" is empty.'.format(filename))
                 continue
 
-            media_title_root = numbered_title = gallery.title
+            media_title_root = numbered_title = album.title
 
             # A photo might already exist with the same slug. So it's somewhat inefficient,
             # but we loop until we find a slug that's available.
@@ -82,42 +82,42 @@ class MediaForm(forms.Form):
                 photo.src = "medialogue/{}".format(upload_id)
                 photo.save()
                 photo.sites.add(CURRENT_SITE)
-                gallery.media.add(photo)
+                album.media.add(photo)
             elif file_mimetype == "video":
                 logger.info("video mimetype detected")
                 video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'])
                 video.src = "medialogue/{}".format(upload_id)
                 video.save()
                 video.sites.add(CURRENT_SITE)
-                gallery.media.add(video)
+                album.media.add(video)
             else:
                 logger.error('cound not process file "{}"'.format(filename))
-        return gallery.slug
+        return album.slug
 
 class NewAlbumForm(MediaForm):
-    gallery_title = forms.CharField(label='Album Title', max_length=100, required=False)
+    album_title = forms.CharField(label='Album Title', max_length=100, required=False)
 
-    field_order = ['gallery_title', 'is_public', 'description', 'filepond',]
+    field_order = ['album_title', 'is_public', 'description', 'filepond',]
 
     def clean_title(self):
-        gallery_title = self.cleaned_data['gallery_title']
-        if Album.objects.filter(title=gallery_title).exists():
-            raise forms.ValidationError(_('A gallery with that title already exists.'))
-        return gallery_title
+        album_title = self.cleaned_data['album_title']
+        if Album.objects.filter(title=album_title).exists():
+            raise forms.ValidationError(_('A album with that title already exists.'))
+        return album_title
 
     def save(self):
         CURRENT_SITE = Site.objects.get(id=settings.SITE_ID)
-        slug, num_found = _generate_slug(self.cleaned_data['gallery_title'], Album)
-        gallery = Album.objects.create(title=self.cleaned_data['gallery_title'],
+        slug, num_found = _generate_slug(self.cleaned_data['album_title'], Album)
+        album = Album.objects.create(title=self.cleaned_data['album_title'],
                                               slug=slug,
                                               description=self.cleaned_data['description'],
                                               is_public=self.cleaned_data['is_public'])
-        gallery.sites.add(CURRENT_SITE)
-        return super(NewAlbumForm, self).save(gallery)
+        album.sites.add(CURRENT_SITE)
+        return super(NewAlbumForm, self).save(album)
 
 class EditAlbumForm(MediaForm):
-    gallery = forms.ModelChoiceField(Album.objects.all(),
+    album = forms.ModelChoiceField(Album.objects.all(),
                                      label=_('Album'),
                                      required=True,
-                                     help_text=_('Select a gallery to add these images to. Leave this empty to '
-                                                 'create a new gallery from the supplied title.'))
+                                     help_text=_('Select a album to add these images to. Leave this empty to '
+                                                 'create a new album from the supplied title.'))
