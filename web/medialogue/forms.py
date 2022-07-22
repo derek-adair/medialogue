@@ -95,7 +95,7 @@ class MediaForm(forms.Form):
         return album.slug
 
 class NewAlbumForm(MediaForm):
-    album_title = forms.CharField(label='Album Title', max_length=100, required=False)
+    album_title = forms.CharField(label='Album Title', max_length=100 )
 
     field_order = ['album_title', 'is_public', 'description', 'filepond',]
 

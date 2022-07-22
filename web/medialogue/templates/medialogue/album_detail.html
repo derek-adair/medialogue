@@ -14,6 +14,11 @@
 
 {% if object.media %}
             <div class="grid">
+            {% if user.is_staff %}
+            <div class="grid-item">
+                <a href="{% url 'medialogue:ml-album-edit' slug=object.slug %}">Add To Album</a>
+            </div>
+            {% endif %}
             {% for media in object.media.all %}
             {% if media.video.thumbnail %}
             <div class="grid-item "><a href="{{media.video.get_absolute_url }}" ><img
