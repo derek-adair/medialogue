@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ album.title }}{% endblock %}
+
+{% block content %}
+
+{{form.as_p}}
+{% if album.media %}
+<div class="grid">
+    {% if user.is_staff %}
+    <div class="item">
+	<div class="item-content">
+	    <a href="#">Add To Album</a>
+	</div>
+    </div>
+    {% endif %}
+    {% for media in album.media.all %}
+	{% if media.video.thumbnail %}
+	<div class="item">
+	    <div class="item-content">
+                <img src="{{media.video.thumbnail.url }}" class="img-thumbnail video" width="200" />
+	    </div>
+	</div>
+	{% else %}
+	<div class="item">
+	    <div class="item-content">
+		<img src="{{media.photo.src.url}}" class="img-thumbnail photo" data-id="{{media.id}}" width="200" />
+	    </div>
+	</div>
+	{% endif %}
+    {% endfor %}
+</div>
+    {% else %}
+	<div class="row">
+	    <div class="col-lg-12"><h1>Nothing here...</h1></div>
+	</div>
+    {% endif %}
+{% endblock %}
+    {% block extra_scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/muuri@0.9.5/dist/muuri.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web-animations-js@2.3.2/web-animations.min.js"></script>
+    <script>
+	$(function(){
+	    var grid = new Muuri('.grid', {dragEnabled: true });
+	});
+    </script>
+    {% endblock %}

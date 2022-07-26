@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView
+from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -15,9 +15,14 @@ class AlbumListView(ListView):
 class AlbumDetailView(DetailView):
     queryset = Album.objects.is_public().on_site()
 
-class AlbumEditView(UpdateView):
-    model = Album
-    fields = ('description', 'title', 'is_public', 'media')
+def AlbumEditView(request, slug):
+    album = Album.objects.get(slug=slug)
+    form = NewAlbumForm({
+        'album_title': album.title,
+        'description': album.description,
+        'is_public': album.is_public
+    })
+    return render(request, 'medialogue/album_edit.html', {'form': form, 'album': album})
 
 class PhotoListView(ListView):
     queryset = Photo.objects.on_site().is_public()
