@@ -11,6 +11,7 @@ urlpatterns = [
             ),
             name='ml-medialogue-root'
         ),
+	path('api/', include('medialogue.api.urls')),
 	path('albums/', AlbumListView.as_view(), name='ml-album-list'),
         path('album/new/', NewAlbum, name='new-album'),
         re_path('album/(?P<slug>[\-\d\w]+)/edit/$', AlbumEditView, name='ml-album-edit'),

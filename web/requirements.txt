@@ -3,6 +3,7 @@ gunicorn
 psycopg2
 redis
 python-magic
+djangorestframework
 
 #Dev Things
 selenium>=3.141, <4.0

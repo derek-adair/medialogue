@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_drf_filepond',
     # LOCAL apps
     'medialogue',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
