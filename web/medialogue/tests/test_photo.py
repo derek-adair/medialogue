@@ -62,8 +62,7 @@ class PhotoTest(MedialogueBaseTest):
     def test_unicode(self):
         """Trivial check that unicode titles work.
         (I was trying to track down an elusive unicode issue elsewhere)"""
-        self.pl2 = PhotoFactory(title='É',
-                                slug='é')
+        self.pl2 = PhotoFactory(title='É', slug='é', album=self.album)
 
 
 class PhotoManagerTest(MedialogueBaseTest):
@@ -72,7 +71,7 @@ class PhotoManagerTest(MedialogueBaseTest):
     def setUp(self):
         """Create 2 photos."""
         super(PhotoManagerTest, self).setUp()
-        self.pl2 = PhotoFactory()
+        self.pl2 = PhotoFactory(album=self.album)
 
     def tearDown(self):
         super(PhotoManagerTest, self).tearDown()

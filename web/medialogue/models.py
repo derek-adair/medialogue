@@ -167,19 +167,11 @@ class Album(models.Model):
         """Return a queryset of all the public media in this album."""
         return self.media.is_public().filter(sites__id=settings.SITE_ID)
 
-    def orphaned_media(self):
-        """
-        Return all media that belong to this album but don't share the
-        album's site.
-        """
-        return self.media.filter(is_public=True) \
-                .exclude(sites__id__in=self.sites.all())
-
     def get_absolute_url(self):
         return reverse('medialogue:ml-album', args=[self.slug])
 class Media(OrderedModel):
     objects = SharedQueries.as_manager()
-    album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    album = models.ForeignKey(Album, related_name="media", on_delete=models.CASCADE)
     order_with_respect_to = 'album'
 
     date_taken = models.DateTimeField(

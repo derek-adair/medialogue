@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 
 from ..models import Photo
-from .factories import PhotoFactory
+from .factories import PhotoFactory, AlbumFactory
 
 
 @override_settings(ROOT_URLCONF='medialogue.tests.test_urls')
@@ -9,11 +9,12 @@ class RequestPhotoTest(TestCase):
 
     def setUp(self):
         super(RequestPhotoTest, self).setUp()
-        self.photo = PhotoFactory(slug='fake-photo')
+        self.album = AlbumFactory()
+        self.photo = PhotoFactory(slug='fake-photo', album=self.album)
 
-    def tearDown(self):
-        super(RequestPhotoTest, self).tearDown()
-        self.photo.src.delete()
+    #def tearDown(self):
+    #    super(RequestPhotoTest, self).tearDown()
+    #    self.photo.src.delete()
 
     def test_archive_photo_empty(self):
         """If there are no photo to show, tell the visitor - don't show a
