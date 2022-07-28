@@ -34,13 +34,12 @@ def _generate_slug(title, obj):
 class MediaForm(forms.Form):
     description = forms.CharField(label=_('Description'),
                                   required=False,
-                                  help_text=_('A description of this Album. Only required for new albums.'))
+                                 )
 
     is_public = forms.BooleanField(label=_('Public'),
                                    initial=True,
                                    required=False,
-                                   help_text=_('Uncheck this to make the uploaded '
-                                               'album and included photographs private.'))
+                                 )
     filepond = SimpleArrayField(forms.CharField(max_length=255), widget=forms.HiddenInput(),
            required=False)
 
@@ -119,5 +118,4 @@ class EditAlbumForm(MediaForm):
     album = forms.ModelChoiceField(Album.objects.all(),
                                      label=_('Album'),
                                      required=True,
-                                     help_text=_('Select a album to add these images to. Leave this empty to '
-                                                 'create a new album from the supplied title.'))
+                                     )
