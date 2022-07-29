@@ -37,6 +37,8 @@ class SitesTest(TestCase):
 
     def tearDown(self):
         super(SitesTest, self).tearDown()
+        self.photo1.src.delete()
+        self.photo2.src.delete()
         self.album1.delete()
         self.album2.delete()
 
@@ -57,12 +59,14 @@ class SitesTest(TestCase):
         self.assertEqual(list(album.sites.all()), [self.site1])
         self.assertEqual(list(photo.sites.all()), [self.site1])
 
+        photo.src.delete()
 
         with self.settings(MEDIALOGUE_MULTISITE=True):
             album = AlbumFactory()
             photo = PhotoFactory(album=album)
         self.assertEqual(list(album.sites.all()), [])
         self.assertEqual(list(photo.sites.all()), [])
+        photo.src.delete()
 
 
     def test_album_list(self):
