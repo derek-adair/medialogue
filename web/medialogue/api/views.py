@@ -10,12 +10,13 @@ from rest_framework import status
 def reorder_media(request, pk):
     try:
         media = Media.objects.get(pk=pk)
-        order = request.POST.get('order', None)
-        if order is None:
-            return Response({"msg" : "order field required in form"}, status=status.HTTP_400_BAD_REQUEST)
-        media.to(int(order))
-        media.save()
-        return Response({"msg":"{0} moved to {1}".format(media.title, request.data['order'])},
-                        status=status.HTTP_200_OK)
     except ObjectDoesNotExist:
         return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+    order = request.POST.get('order', None)
+    if order is None:
+        return Response({"msg" : "order field required in form"}, status=status.HTTP_400_BAD_REQUEST)
+    media.to(int(order))
+    media.save()
+    return Response({"msg":"{0} moved to {1}".format(media.title, request.data['order'])},
+                    status=status.HTTP_200_OK)
