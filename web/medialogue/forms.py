@@ -114,8 +114,7 @@ class NewAlbumForm(MediaForm):
         album.sites.add(CURRENT_SITE)
         return super(NewAlbumForm, self).save(album)
 
-class EditAlbumForm(MediaForm):
-    album = forms.ModelChoiceField(Album.objects.all(),
-                                     label=_('Album'),
-                                     required=True,
-                                     )
+class EditAlbumForm(forms.ModelForm):
+    class Meta:
+        model = Album
+        fields = ['title', 'description', 'is_public']

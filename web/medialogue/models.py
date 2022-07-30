@@ -104,13 +104,11 @@ class Album(models.Model):
         _('title slug'),
         unique=True,
         max_length=250,
-        help_text=_('A "slug" is a unique URL-friendly title for an object.'),
     )
     description = models.TextField(_('description'), blank=True)
     is_public = models.BooleanField(
         _('is public'),
         default=True,
-        help_text=_('Public albums will be displayed in the default views.'),
     )
     sites = models.ManyToManyField(
         Site,
@@ -178,7 +176,6 @@ class Media(OrderedModel):
         _('date taken'),
         null=True,
         blank=True,
-        help_text=_('Date image was taken; is obtained from the image EXIF data.'),
     )
     title = models.CharField(
         _('title'),
@@ -189,14 +186,12 @@ class Media(OrderedModel):
         _('slug'),
         unique=True,
         max_length=250,
-        help_text=_('A "slug" is a unique URL-friendly title for an object.'),
     )
     caption = models.TextField(_('caption'), blank=True)
     date_added = models.DateTimeField(_('date added'), default=now)
     is_public = models.BooleanField(
         _('is public'),
         default=True,
-        help_text=_('Public photographs will be displayed in the default views.'),
     )
 
     sites = models.ManyToManyField(
@@ -231,14 +226,6 @@ class Media(OrderedModel):
         if not self.is_public:
             raise ValueError('Cannot determine neighbours of a non-public media.')
         media = album.media.is_public()
-
-        # TODO - issues with Photo/Video/Media objects.  self will look like Photo(I) while 
-        # The media queryset will look like [Media(I)]
-        #if self not in media:
-        #    raise ValueError('media does not belong to album.')
-        #if self not in media:
-        #    raise ValueError('Photo does not belong to album.')
-
         matched = False
 
         for m in media:

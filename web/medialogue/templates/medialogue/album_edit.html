@@ -5,7 +5,11 @@
 
 {% block content %}
 
-{{form.as_p}}
+<form action="{% url "medialogue:ml-album-edit" album.slug %}" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="save album">
+</form>
 	<div class="item-content">
 	    <a href="#">Add To Album</a>
 	</div>
