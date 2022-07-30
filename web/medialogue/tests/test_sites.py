@@ -27,9 +27,8 @@ class SitesTest(TestCase):
             # Be explicit about linking Albums/Photos to Sites."""
             self.album1 = AlbumFactory(slug='test-album', sites=[self.site1])
             self.album2 = AlbumFactory(slug='not-on-site-album')
-            self.photo1 = PhotoFactory(slug='test-photo', sites=[self.site1])
-            self.photo2 = PhotoFactory(slug='not-on-site-photo')
-            self.album1.media.add(self.photo1, self.photo2)
+            self.photo1 = PhotoFactory(slug='test-photo', sites=[self.site1], album=self.album1)
+            self.photo2 = PhotoFactory(slug='not-on-site-photo', album=self.album1)
 
         # I'd like to use factory_boy's mute_signal decorator but that
         # will only available once factory_boy 2.4 is released. So long
@@ -38,10 +37,10 @@ class SitesTest(TestCase):
 
     def tearDown(self):
         super(SitesTest, self).tearDown()
-        self.album1.delete()
-        self.album2.delete()
         self.photo1.src.delete()
         self.photo2.src.delete()
+        self.album1.delete()
+        self.album2.delete()
 
     def test_basics(self):
         """ See if objects were added automatically (by the factory) to the current site. """
@@ -56,21 +55,19 @@ class SitesTest(TestCase):
 
         with self.settings(MEDIALOGUE_MULTISITE=False):
             album = AlbumFactory()
-            photo = PhotoFactory()
+            photo = PhotoFactory(album=album)
         self.assertEqual(list(album.sites.all()), [self.site1])
         self.assertEqual(list(photo.sites.all()), [self.site1])
 
-        # Gotta manually delete these
         photo.src.delete()
 
         with self.settings(MEDIALOGUE_MULTISITE=True):
             album = AlbumFactory()
-            photo = PhotoFactory()
+            photo = PhotoFactory(album=album)
         self.assertEqual(list(album.sites.all()), [])
         self.assertEqual(list(photo.sites.all()), [])
-
-        # Gotta manually delete these
         photo.src.delete()
+
 
     def test_album_list(self):
         response = self.client.get('/ptests/albums/')
@@ -102,15 +99,3 @@ class SitesTest(TestCase):
         response = self.client.get('/ptests/album/test-album/')
 
         self.assertEqual(list(response.context['object'].public()), [self.photo1.media_ptr])
-    def test_orphaned_media(self):
-        self.assertEqual(list(self.album1.orphaned_media()), [self.photo2.media_ptr])
-
-        self.album2.media.add(self.photo2)
-        self.assertEqual(list(self.album1.orphaned_media()), [self.photo2.media_ptr])
-
-        self.album1.sites.clear()
-        self.assertEqual(list(self.album1.orphaned_media()), [self.photo1.media_ptr, self.photo2.media_ptr])
-
-        self.photo1.sites.clear()
-        self.photo2.sites.clear()
-        self.assertEqual(list(self.album1.orphaned_media()), [self.photo1.media_ptr, self.photo2.media_ptr])

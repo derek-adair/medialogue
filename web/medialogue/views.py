@@ -1,10 +1,11 @@
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
-from .forms import NewAlbumForm
+from .forms import NewAlbumForm, EditAlbumForm
 #@TODO - refactor MediaAlbum model name to Album
 from .models import Album, Video, Photo
 
@@ -13,6 +14,15 @@ class AlbumListView(ListView):
 
 class AlbumDetailView(DetailView):
     queryset = Album.objects.is_public().on_site()
+
+@require_http_methods(['GET', 'POST'])
+def AlbumEditView(request, slug):
+    album = get_object_or_404(Album, slug=slug)
+    form = EditAlbumForm(request.POST or None, instance=album)
+    if request.POST:
+        if form.is_valid():
+            form.save()
+    return render(request, 'medialogue/album_edit.html', {'form': form, 'album': album})
 
 class PhotoListView(ListView):
     queryset = Photo.objects.on_site().is_public()

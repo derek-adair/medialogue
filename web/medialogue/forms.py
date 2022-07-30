@@ -34,13 +34,12 @@ def _generate_slug(title, obj):
 class MediaForm(forms.Form):
     description = forms.CharField(label=_('Description'),
                                   required=False,
-                                  help_text=_('A description of this Album. Only required for new albums.'))
+                                 )
 
     is_public = forms.BooleanField(label=_('Public'),
                                    initial=True,
                                    required=False,
-                                   help_text=_('Uncheck this to make the uploaded '
-                                               'album and included photographs private.'))
+                                 )
     filepond = SimpleArrayField(forms.CharField(max_length=255), widget=forms.HiddenInput(),
            required=False)
 
@@ -80,22 +79,22 @@ class MediaForm(forms.Form):
                         )
 
                 photo.src = "medialogue/{}".format(upload_id)
+                photo.album = album
                 photo.save()
                 photo.sites.add(CURRENT_SITE)
-                album.media.add(photo)
             elif file_mimetype == "video":
                 logger.info("video mimetype detected")
                 video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'])
                 video.src = "medialogue/{}".format(upload_id)
+                video.album = album
                 video.save()
                 video.sites.add(CURRENT_SITE)
-                album.media.add(video)
             else:
                 logger.error('cound not process file "{}"'.format(filename))
         return album.slug
 
 class NewAlbumForm(MediaForm):
-    album_title = forms.CharField(label='Album Title', max_length=100, required=False)
+    album_title = forms.CharField(label='Album Title', max_length=100 )
 
     field_order = ['album_title', 'is_public', 'description', 'filepond',]
 
@@ -115,9 +114,7 @@ class NewAlbumForm(MediaForm):
         album.sites.add(CURRENT_SITE)
         return super(NewAlbumForm, self).save(album)
 
-class EditAlbumForm(MediaForm):
-    album = forms.ModelChoiceField(Album.objects.all(),
-                                     label=_('Album'),
-                                     required=True,
-                                     help_text=_('Select a album to add these images to. Leave this empty to '
-                                                 'create a new album from the supplied title.'))
+class EditAlbumForm(forms.ModelForm):
+    class Meta:
+        model = Album
+        fields = ['title', 'description', 'is_public']

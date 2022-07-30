@@ -42,11 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     # Apps
     'django_rq',
-    'sortedm2m',
+    'ordered_model',
     'video_encoding',
     'django_drf_filepond',
     # LOCAL apps
     'medialogue',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

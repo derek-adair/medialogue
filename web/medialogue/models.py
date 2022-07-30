@@ -15,7 +15,7 @@ from django.urls import reverse
 from video_encoding.fields import VideoField
 from video_encoding.models import Format
 
-from sortedm2m.fields import SortedManyToManyField
+from ordered_model.models import OrderedModel, OrderedModelQuerySet
 
 import logging
 logger = logging.getLogger(__name__)
@@ -82,19 +82,100 @@ JPEG_QUALITY_CHOICES = (
     (90, _('Very High')),
 )
 
-class SharedQueries(models.query.QuerySet):
+class SharedQueries(OrderedModelQuerySet):
     def on_site(self):
         """Return objects linked to the current site only."""
         return self.filter(sites__id=settings.SITE_ID)
     def is_public(self):
         return self.filter(is_public=True)
+class MedialogueQueryManager(models.Manager.from_queryset(SharedQueries)):
+    pass
 
-class Media(models.Model):
+
+class Album(models.Model):
+    objects = SharedQueries.as_manager()
+    date_added = models.DateTimeField(_('date published'), default=now)
+    title = models.CharField(
+        _('title'),
+        max_length=250,
+        unique=True,
+    )
+    slug = models.SlugField(
+        _('title slug'),
+        unique=True,
+        max_length=250,
+    )
+    description = models.TextField(_('description'), blank=True)
+    is_public = models.BooleanField(
+        _('is public'),
+        default=True,
+    )
+    sites = models.ManyToManyField(
+        Site,
+        verbose_name=_('sites'),
+        blank=True
+    )
+
+    class Meta:
+        ordering = ['-date_added']
+        get_latest_by = 'date_added'
+        verbose_name = _('Album')
+        verbose_name_plural = _('Albums')
+
+    def __str__(self):
+        return self.title
+
+    def latest(self, limit=LATEST_LIMIT, public=True):
+        if not limit:
+            limit = self.media_count()
+            if public:
+                return self.public()[:limit]
+            else:
+                return self.media.filter(sites__id=settings.SITE_ID)[:limit]
+
+    def public(self):
+        """Return a queryset of all the public media in this album."""
+        return self.media.is_public().filter(sites__id=settings.SITE_ID)
+
+    def sample(self, count=None, public=True):
+        """Return a sample of media, ordered at random.
+        If the 'count' is not specified, it will return a number of media
+        limited by the GALLERY_SAMPLE_SIZE setting.
+        """
+        if not count:
+            count = SAMPLE_SIZE
+            if count > self.photo_count():
+                count = self.photo_count()
+                if public:
+                    photo_set = self.public()
+                else:
+                    photo_set = self.media.filter(sites__id=settings.SITE_ID)
+                    return random.sample(set(photo_set), count)
+
+    def media_count(self, public=True):
+        """Return a count of all the media in this album."""
+        if public:
+            return self.public().count()
+        else:
+            return self.media.filter(sites__id=settings.SITE_ID).count()
+
+    media_count.short_description = _('count')
+
+    def public(self):
+        """Return a queryset of all the public media in this album."""
+        return self.media.is_public().filter(sites__id=settings.SITE_ID)
+
+    def get_absolute_url(self):
+        return reverse('medialogue:ml-album', args=[self.slug])
+class Media(OrderedModel):
+    objects = SharedQueries.as_manager()
+    album = models.ForeignKey(Album, related_name="media", on_delete=models.CASCADE)
+    order_with_respect_to = 'album'
+
     date_taken = models.DateTimeField(
         _('date taken'),
         null=True,
         blank=True,
-        help_text=_('Date image was taken; is obtained from the image EXIF data.'),
     )
     title = models.CharField(
         _('title'),
@@ -105,14 +186,12 @@ class Media(models.Model):
         _('slug'),
         unique=True,
         max_length=250,
-        help_text=_('A "slug" is a unique URL-friendly title for an object.'),
     )
     caption = models.TextField(_('caption'), blank=True)
     date_added = models.DateTimeField(_('date added'), default=now)
     is_public = models.BooleanField(
         _('is public'),
         default=True,
-        help_text=_('Public photographs will be displayed in the default views.'),
     )
 
     sites = models.ManyToManyField(
@@ -120,7 +199,6 @@ class Media(models.Model):
         verbose_name=_('sites'),
         blank=True,
     )
-    objects = SharedQueries.as_manager()
 
     def get_previous_in_album(self, album):
         """Find the neighbour of this media object in the supplied album.
@@ -148,14 +226,6 @@ class Media(models.Model):
         if not self.is_public:
             raise ValueError('Cannot determine neighbours of a non-public media.')
         media = album.media.is_public()
-
-        # TODO - issues with Photo/Video/Media objects.  self will look like Photo(I) while 
-        # The media queryset will look like [Media(I)]
-        #if self not in media:
-        #    raise ValueError('media does not belong to album.')
-        #if self not in media:
-        #    raise ValueError('Photo does not belong to album.')
-
         matched = False
 
         for m in media:
@@ -237,98 +307,6 @@ class Video(Media):
     def __str__(self):
         return self.title
 
-class Album(models.Model):
-    media = SortedManyToManyField(
-        'medialogue.Media',
-        related_name='albums',
-        verbose_name=('media'),
-        blank=True,
-    )
-    date_added = models.DateTimeField(_('date published'), default=now)
-    title = models.CharField(
-        _('title'),
-        max_length=250,
-        unique=True,
-    )
-    slug = models.SlugField(
-        _('title slug'),
-        unique=True,
-        max_length=250,
-        help_text=_('A "slug" is a unique URL-friendly title for an object.'),
-    )
-    description = models.TextField(_('description'), blank=True)
-    is_public = models.BooleanField(
-        _('is public'),
-        default=True,
-        help_text=_('Public albums will be displayed in the default views.'),
-    )
-    sites = models.ManyToManyField(
-        Site,
-        verbose_name=_('sites'),
-        blank=True
-    )
-
-    objects = SharedQueries.as_manager()
-
-    class Meta:
-        ordering = ['-date_added']
-        get_latest_by = 'date_added'
-        verbose_name = _('Album')
-        verbose_name_plural = _('Albums')
-
-    def __str__(self):
-        return self.title
-
-    def latest(self, limit=LATEST_LIMIT, public=True):
-        if not limit:
-            limit = self.media_count()
-            if public:
-                return self.public()[:limit]
-            else:
-                return self.media.filter(sites__id=settings.SITE_ID)[:limit]
-
-    def public(self):
-        """Return a queryset of all the public media in this album."""
-        return self.media.is_public().filter(sites__id=settings.SITE_ID)
-
-    def sample(self, count=None, public=True):
-        """Return a sample of media, ordered at random.
-        If the 'count' is not specified, it will return a number of media
-        limited by the GALLERY_SAMPLE_SIZE setting.
-        """
-        if not count:
-            count = SAMPLE_SIZE
-            if count > self.photo_count():
-                count = self.photo_count()
-                if public:
-                    photo_set = self.public()
-                else:
-                    photo_set = self.media.filter(sites__id=settings.SITE_ID)
-                    return random.sample(set(photo_set), count)
-
-    def media_count(self, public=True):
-        """Return a count of all the media in this album."""
-        if public:
-            return self.public().count()
-        else:
-            return self.media.filter(sites__id=settings.SITE_ID).count()
-
-    media_count.short_description = _('count')
-
-    def public(self):
-        """Return a queryset of all the public media in this album."""
-        return self.media.is_public().filter(sites__id=settings.SITE_ID)
-
-    def orphaned_media(self):
-        """
-        Return all media that belong to this album but don't share the
-        album's site.
-        """
-        return self.media.filter(is_public=True) \
-                .exclude(sites__id__in=self.sites.all())
-
-    def get_absolute_url(self):
-        return reverse('medialogue:ml-album', args=[self.slug])
 
 
 def add_default_site(instance, created, **kwargs):

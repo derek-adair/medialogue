@@ -2,7 +2,7 @@ import warnings
 
 from django.test import TestCase
 
-from .factories import PhotoFactory
+from .factories import PhotoFactory, AlbumFactory
 
 
 class MedialogueBaseTest(TestCase):
@@ -14,7 +14,8 @@ class MedialogueBaseTest(TestCase):
         except NameError:
             # Doesn't exist in Python 2.7.
             pass
-        self.pl = PhotoFactory(title='Landscape', slug='landscape')
+        self.album = AlbumFactory()
+        self.pl = PhotoFactory(album=self.album, title='Landscape', slug='landscape')
 
     def tearDown(self):
         # Need to manually remove the files created during testing.

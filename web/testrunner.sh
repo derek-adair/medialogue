@@ -1,3 +1,3 @@
 while true; do
-ag -l | entr -dc pytest $@
+ag -l | entr -dc pytest --pdb $@
 done
