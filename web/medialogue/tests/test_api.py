@@ -12,6 +12,12 @@ class ApiTest(MedialogueBaseTest):
         super(ApiTest, self).tearDown()
         self.pl2.src.delete()
 
+    def test_add_to_album_api(self):
+        url = '/api/add-to-album/{0}/'.format(self.album.id)
+
+        response = self.client.post(url, {})
+
+        self.assertEqual(response.status_code, 200)
     def test_reorder_media_api(self):
         url = '/api/reorder-media/{0}/'.format(self.pl2.id)
         data = {'order' : 0}

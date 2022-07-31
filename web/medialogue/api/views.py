@@ -20,3 +20,7 @@ def reorder_media(request, pk):
     media.save()
     return Response({"msg":"{0} moved to {1}".format(media.title, request.data['order'])},
                     status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def add_to_album(request, pk):
+    return Response({"msg":"add_to_album called"}, status=status.HTTP_200_OK)
