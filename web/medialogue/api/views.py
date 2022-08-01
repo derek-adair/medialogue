@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from medialogue.models import Media
+from medialogue.models import Media, Album
 
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -23,4 +23,8 @@ def reorder_media(request, pk):
 
 @api_view(['POST'])
 def add_to_album(request, pk):
+    try:
+        album = Album.objects.get(pk=pk)
+    except ObjectDoesNotExist:
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
     return Response({"msg":"add_to_album called"}, status=status.HTTP_200_OK)
