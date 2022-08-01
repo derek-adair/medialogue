@@ -15,7 +15,7 @@
     <input type="submit" value="save album">
 </form>
 	<div class="item-content">
-	    <a id="add-to-album" href="#add-to-album">Add To Album</a>
+	    <a id="open-media-modal" href="#add-to-album">Add To Album</a>
 	</div>
 {% if album.media %}
 <div class="grid">
@@ -52,44 +52,46 @@
         </button>
       </div>
       <div class="modal-body">
-    <input type="file"
-	class="filepond"
-	id="attachments"
-	name="filepond"
-	multiple
-	>
+          <form id="add-to-album-form" action="{% url 'medialogue:add-to-album' album.id %}">
+            <input type="file"
+                class="filepond"
+                id="attachments"
+                name="filepond"
+                multiple
+                >
+          </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Add to album</button>
+        <button id="add-to-album" type="button" class="btn btn-primary">Add to album</button>
       </div>
     </div>
   </div>
-</div> 
+</div>
 {% endblock %}
-    {% block extra_scripts %}
+{% block extra_scripts %}
     <script src="https://cdn.jsdelivr.net/npm/muuri@0.9.5/dist/muuri.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/web-animations-js@2.3.2/web-animations.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
-        <script>
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
                 }
-                return cookieValue;
             }
-            const csrftoken = getCookie('csrftoken');
-        </script>
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+    </script>
     <script src="{% static 'medialogue/js/album_edit.js' %}"></script>
-    {% endblock %}
+{% endblock %}
