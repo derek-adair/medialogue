@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static thumbnail %}
 
 {% block title %}{{ album.title }}{% endblock %}
 
@@ -22,19 +22,11 @@
     {% if user.is_staff %}
     {% endif %}
     {% for media in album.media.all %}
-	{% if media.video.thumbnail %}
-        <div class="item" data-item-id="{{media.id}}" >
-	    <div class="item-content">
-                <img src="{{media.video.thumbnail.url }}" class="img-thumbnail video" width="200" />
-	    </div>
-	</div>
-	{% else %}
 	<div class="item" data-item-id="{{media.id}}" >
 	    <div class="item-content">
-		<img src="{{media.photo.src.url}}" class="img-thumbnail photo" width="200" />
+		<img src="{% thumbnail media.preview 100x100 crop %}" class="img-thumbnail" />
 	    </div>
 	</div>
-	{% endif %}
     {% endfor %}
 </div>
     {% else %}
