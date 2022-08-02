@@ -235,6 +235,17 @@ class Media(OrderedModel):
                 matched = True
         return None
 
+    def get_absolute_url(self):
+        if hasattr(self, 'video'):
+            return self.video.get_absolute_url()
+        else:
+            return self.photo.get_absolute_url()
+
+    def preview(self):
+        if hasattr(self, 'video'):
+            return self.video.thumbnail
+        else:
+            return self.photo.src
 
 class Photo(Media):
     objects = SharedQueries.as_manager()

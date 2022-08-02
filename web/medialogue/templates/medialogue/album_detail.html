@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static thumbnail %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -18,19 +18,11 @@
 {% if object.media %}
             <div class="grid">
             {% for media in object.media.all %}
-            {% if media.video.thumbnail %}
             <div class="grid-item ">
-                <a href="{{media.video.get_absolute_url }}" >
-                    <img src="{{media.video.thumbnail.url }}" class="img-thumbnail video" width="200" />
+                <a href="{{media.get_absolute_url }}" >
+                    <img src="{% thumbnail media.preview 200x200 crop %}" class="img-thumbnail" />
                 </a>
             </div>
-             {% else %}
-                <div class="grid-item">
-                    <a href="{{ media.photo.get_absolute_url }}" >
-                        <img src="{{media.photo.src.url}}" class="img-thumbnail photo" width="200" /></li>
-                    </a>
-                </div>
-                {% endif %}
             {% endfor %}
 {% else %}
     <div class="row">

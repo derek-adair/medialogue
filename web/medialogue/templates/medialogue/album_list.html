@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static thumbnail %}
 
 {% block title %}Albums{% endblock %}
 
@@ -19,19 +19,11 @@
         <p>{{album.date_added | date:"F d, Y"}}</p>
         <div class="grid">
         {% for media in album.media.all %}
-            {% if media.video.thumbnail %}
             <div class="grid-item ">
-                <a href="{{media.video.get_absolute_url }}" >
-                    <img src="{{media.video.thumbnail.url }}" class="img-thumbnail video" width="200" />
+                <a href="{{media.get_absolute_url }}" >
+                    <img src="{% thumbnail media.preview 200x200 crop %}" class="img-thumbnail" />
                 </a>
             </div>
-            {% else %}
-            <div class="grid-item">
-                <a href="{{ media.photo.get_absolute_url }}" >
-                    <img src="{{media.photo.src.url}}" class="img-thumbnail photo" width="200" /></li>
-                </a>
-            </div>
-            {% endif %}
          {% endfor %}
     </div>
 {% endfor %}
@@ -40,4 +32,16 @@
     <div class="col-lg-12">No albums were found.</div>
 </div>
 {% endif %}
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
+<script>
+$(function(){
+$('.grid').masonry({
+  // options
+    itemSelector: '.grid-item',
+      columnWidth: 210
+      });
+});
+</script>
 {% endblock %}

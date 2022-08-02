@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # LOCAL apps
     'medialogue',
     'rest_framework',
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE = [
