@@ -167,4 +167,5 @@ LOGGING = {
     },
 }
 
+# Can users right click to download images or not (
 MEDIALOGUE_BLOCK_DOWNLOADS = os.getenv("MEDIALOGUE_BLOCK_DOWNLOADS", False)
