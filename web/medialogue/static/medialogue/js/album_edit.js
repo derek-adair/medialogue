@@ -11,7 +11,7 @@ $(function(){
 		// remove add-to-modal hash without refreshing
     history.pushState("", document.title, window.location.pathname + window.location.search);
 	})
-  $("#open-media-model").click(function(e){
+  $("#open-media-modal").click(function(e){
     add_to_album_modal.modal('show')
 	})
   $("#add-to-album").click(function(e){
