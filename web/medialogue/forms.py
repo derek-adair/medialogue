@@ -60,7 +60,7 @@ class MediaForm(forms.Form):
                 logger.debug('File "{}" is empty.'.format(filename))
                 continue
 
-            media_title_root = numbered_title = album.title
+            media_title_root = album.title
 
             # A photo might already exist with the same slug. So it's somewhat inefficient,
             # but we loop until we find a slug that's available.

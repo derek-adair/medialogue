@@ -1,5 +1,6 @@
-# WARNING: VERY UNSTABLE
-Currently not really trying that hard to maintain compatability.  So i'd deifnitely not recommend using it unless you are comfortable reading my code and doing manual migrations.  I'm currently about to wipe cleand and start over the only project I have using this.  I expect this will stabilize and/or I will be less lazy and make migrations by the end of 2022... but maybe earlier ¯\_(ツ)_/¯
+# Medialogue
+
+Medialogue is a fork of of [photologue](https://github.com/richardbarran/django-photologue) with video support and a more modern feel.
 
 ## Quick Start
 **Clone & start the container**
@@ -29,10 +30,8 @@ docker exec -it medialogue_web_1
 
 Now Medialogue is running on localhost:8001 with a djangorq worker started, pointing to our redis container.  If you followed these directions you should see the django-rq worker console output.  In another terminal you can easily attach to the web console output by running `docker attach medialogue_web_1`.
 
-
-## Medialogue
-
-Medialogue is a fork of of [photologue](https://github.com/richardbarran/django-photologue) with video support and a more modern feel.
+## WARNING: VERY UNSTABLE
+Currently not really trying that hard to maintain compatability.  So i'd deifnitely not recommend using it unless you are comfortable reading my code and doing manual migrations.  I'm currently about to wipe cleand and start over the only project I have using this.  I expect this will stabilize and/or I will be less lazy and make migrations by the end of 2022... but maybe earlier ¯\_(ツ)_/¯
 
 ### Major Changes From Photologue
 **Video Support**: Using [django video encoding](https://github.com/escaped/django-video-encoding)
