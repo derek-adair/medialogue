@@ -30,9 +30,6 @@ docker exec -it medialogue_web_1
 
 Now Medialogue is running on localhost:8001 with a djangorq worker started, pointing to our redis container.  If you followed these directions you should see the django-rq worker console output.  In another terminal you can easily attach to the web console output by running `docker attach medialogue_web_1`.
 
-## WARNING: VERY UNSTABLE
-Currently not really trying that hard to maintain compatability.  So i'd deifnitely not recommend using it unless you are comfortable reading my code and doing manual migrations.  I'm currently about to wipe cleand and start over the only project I have using this.  I expect this will stabilize and/or I will be less lazy and make migrations by the end of 2022... but maybe earlier ¯\_(ツ)_/¯
-
 ### Major Changes From Photologue
 **Video Support**: Using [django video encoding](https://github.com/escaped/django-video-encoding)
 **Front end focus**: I've completely disregarded the admin UI for the end user.  Here are a couple neat features;
