@@ -22,7 +22,7 @@ $(function(){
         bodyFormData = new FormData();
 
   filelistInputs.each(function(i, el){
-    bodyFormData.append("filelist", $(el).val())
+    bodyFormData.append("filepond", $(el).val())
   })
     axios({
       method: "POST",

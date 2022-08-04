@@ -32,10 +32,9 @@ def _generate_slug(title, obj):
     return slug_candidate, num_found
 
 class MediaForm(forms.Form):
-    description = forms.CharField(label=_('Description'),
-                                  required=False,
-                                 )
-
+    """
+    Base filepond media form that takes an album, and a list of filepond files to add to said album
+    """
     is_public = forms.BooleanField(label=_('Public'),
                                    initial=True,
                                    required=False,
@@ -60,7 +59,7 @@ class MediaForm(forms.Form):
                 logger.debug('File "{}" is empty.'.format(filename))
                 continue
 
-            media_title_root = album.title
+            media_title_root = numbered_title = album.title
 
             # A photo might already exist with the same slug. So it's somewhat inefficient,
             # but we loop until we find a slug that's available.
@@ -91,9 +90,17 @@ class MediaForm(forms.Form):
                 video.sites.add(CURRENT_SITE)
             else:
                 logger.error('cound not process file "{}"'.format(filename))
+
         return album.slug
 
 class NewAlbumForm(MediaForm):
+    """
+    Used in /album/new/
+    - requires album_title
+    - saves a new album for the current site
+    - saves a list of filepond files from MediaForm
+    """
+    description = forms.CharField(label=_('Description'), required=False,)
     album_title = forms.CharField(label='Album Title', max_length=100 )
 
     field_order = ['album_title', 'is_public', 'description', 'filepond',]
@@ -115,6 +122,9 @@ class NewAlbumForm(MediaForm):
         return super(NewAlbumForm, self).save(album)
 
 class EditAlbumForm(forms.ModelForm):
+    """
+    Used in /album/{ID}/edit/ to edit album meta data
+    """
     class Meta:
         model = Album
         fields = ['title', 'description', 'is_public']
