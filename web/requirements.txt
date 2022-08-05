@@ -3,7 +3,7 @@ gunicorn
 psycopg2
 redis
 python-magic
-easy-thumbnails
+easy-thumbnails[svg]
 djangorestframework
 django-anymail[mailgun]
 django-rq
