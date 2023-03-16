@@ -7,20 +7,25 @@ $(function(){
   /********************************************************************
    * Add To Album Modal Stuff
    *******************************************************************/
+
 	add_to_album_modal.on('hidden.bs.modal', function(e){
 		// remove add-to-modal hash without refreshing
     history.pushState("", document.title, window.location.pathname + window.location.search);
 	})
+
   $("#open-media-modal").click(function(e){
     add_to_album_modal.modal('show')
 	})
+
   $("#add-to-album").click(function(e){
     let mediaForm = $("form#add-to-album-form"),
         post_url = mediaForm.attr("action"),
+				is_public = document.getElementById("id_is_public").checked,
         filelistInputs = mediaForm.find(":input[name=filepond]"),
         filelist = [],
         bodyFormData = new FormData();
 
+  bodyFormData.append("is_public", is_public)
   filelistInputs.each(function(i, el){
     bodyFormData.append("filepond", $(el).val())
   })

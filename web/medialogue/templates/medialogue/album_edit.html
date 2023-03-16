@@ -45,6 +45,7 @@
       </div>
       <div class="modal-body">
           <form id="add-to-album-form" action="{% url 'medialogue:add-to-album' album.id %}">
+<p><label for="id_is_public">Is public:</label> <input type="checkbox" name="is_public" id="id_is_public" checked=""></p>
             <input type="file"
                 class="filepond"
                 id="attachments"
