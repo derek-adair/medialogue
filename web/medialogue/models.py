@@ -29,15 +29,12 @@ SAMPLE_SIZE = getattr(settings, 'MEDIALOGUE_GALLERY_SAMPLE_SIZE', 5)
 # max_length setting for the ImageModel ImageField
 IMAGE_FIELD_MAX_LENGTH = getattr(settings, 'MEDIALOGUE_IMAGE_FIELD_MAX_LENGTH', 100)
 
-# Path to sample image
-SAMPLE_IMAGE_PATH = getattr(settings, 'MEDIALOGUE_SAMPLE_IMAGE_PATH', os.path.join(
-    os.path.dirname(__file__), 'res', 'sample.jpg'))
-
-# Photologue image path relative to media root
+# Medialogue image path relative to media root
 MEDIALOGUE_DIR = getattr(settings, 'MEDIALOGUE_DIR', 'medialogue')
 
 # Look for user function to define file paths
 MEDIALOGUE_PATH = getattr(settings, 'MEDIALOGUE_PATH', None)
+
 if MEDIALOGUE_PATH is not None:
     if callable(MEDIALOGUE_PATH):
         get_storage_path = MEDIALOGUE_PATH
@@ -50,37 +47,6 @@ else:
     def get_storage_path(instance, filename):
         fn = unicodedata.normalize('NFKD', force_str(filename)).encode('ascii', 'ignore').decode('ascii')
         return os.path.join(MEDIALOGUE_DIR, '', fn)
-
-# Exif Orientation values
-# Value 0thRow	0thColumn
-#   1	top     left
-#   2	top     right
-#   3	bottom	right
-#   4	bottom	left
-#   5	left	top
-#   6	right   top
-#   7	right   bottom
-#   8	left    bottom
-
-# Image Orientations (according to EXIF informations) that needs to be
-# transposed and appropriate action
-IMAGE_EXIF_ORIENTATION_MAP = {
-    2: Image.FLIP_LEFT_RIGHT,
-    3: Image.ROTATE_180,
-    6: Image.ROTATE_270,
-    8: Image.ROTATE_90,
-}
-
-# Quality options for JPEG images
-JPEG_QUALITY_CHOICES = (
-    (30, _('Very Low')),
-    (40, _('Low')),
-    (50, _('Medium-Low')),
-    (60, _('Medium')),
-    (70, _('Medium-High')),
-    (80, _('High')),
-    (90, _('Very High')),
-)
 
 class SharedQueries(OrderedModelQuerySet):
     def on_site(self):
