@@ -1,3 +1,4 @@
+import pytest
 from .helpers import MedialogueBaseTest
 from .factories import PhotoFactory, AlbumFactory
 
@@ -19,13 +20,13 @@ class ApiTest(MedialogueBaseTest):
 
         self.assertEqual(response.status_code, 404)
 
-    #@TODO - need to figure out how to mock filepond here? maybe? i dunno
     #def test_add_to_album_api(self):
     #    url = '/api/add-to-album/{0}/'.format(self.album.id)
 
     #    response = self.client.post(url, {})
 
     #    self.assertEqual(response.status_code, 200)
+
     def test_reorder_media_api(self):
         url = '/api/reorder-media/{0}/'.format(self.pl2.id)
         data = {'order' : 0}
@@ -33,6 +34,10 @@ class ApiTest(MedialogueBaseTest):
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, 200)
+        # @TODO - following doesn't work for some reason its always reset. I think its something to do
+        # with it being @pytest.mark.db or something but that doesn't work either
+        #
+        #self.assertEqual(self.pl2.order, 0)
 
     def test_reorder_media_api_throws_404(self):
         url = '/api/reorder-media/{0}/'.format(999999)
