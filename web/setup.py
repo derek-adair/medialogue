@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 from pkg_resources import parse_requirements
 
-version = "2.0.6"
+version = "2.0.8"
 
 def get_requirements(source):
     with open(source) as f:
@@ -37,7 +37,7 @@ setup(
                  'Programming Language :: Python :: 3.5',
                  'Programming Language :: Python :: 3.6',
                  'Topic :: Utilities'],
-    packages=['medialogue'],
+    packages=['medialogue', 'medialogue/api'],
     include_package_data=True,
     package_data= {
             '': package_data,
