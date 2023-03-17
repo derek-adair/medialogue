@@ -5,4 +5,4 @@ django-rq
 django-drf-filepond
 django-video-encoding>=1.0, <2.0
 djangorestframework
-django-ordred-model==3.6
+django-ordered-model==3.6
