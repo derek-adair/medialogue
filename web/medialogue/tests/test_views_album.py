@@ -10,7 +10,7 @@ class RequestAlbumTest(TestCase):
         super(RequestAlbumTest, self).setUp()
         self.album = AlbumFactory(slug='test-album')
 
-    def test_paginated_album_url_works(self):
+    def test_album_url_works(self):
         response = self.client.get('/ptests/albums/')
         self.assertEqual(response.status_code, 200)
 
