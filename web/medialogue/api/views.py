@@ -15,6 +15,8 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from medialogue.forms import _generate_slug, MediaForm
 
+from medialogue.utils import querydict_to_dict
+
 @api_view(['POST'])
 def reorder_media(request, pk):
     try:
@@ -37,7 +39,8 @@ def add_to_album(request, pk):
     except ObjectDoesNotExist:
         return Response({}, status=status.HTTP_404_NOT_FOUND)
 
-    form = MediaForm(request.data or None)
+    post_data = querydict_to_dict(request.data)
+    form = MediaForm(post_data or None)
 
     if form.is_valid():
         slug = form.save(album=album)
