@@ -21,7 +21,7 @@ package_data = package_files('medialogue/migrations') + package_files('medialogu
 setup(
     name='django-medialogue',
     author='Derek Adair',
-    author_email='d@derekadair.comm',
+    author_email='d@derekadair.com',
     version=version,
     description='An Fork of django-medialogue with video support',
     zip_safe=False,
