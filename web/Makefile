@@ -1,11 +1,11 @@
-all: CLEAN BUILD
+all: CLEAN RELEASE
 
 CLEAN: 
-	rm -rf /dist *.egg-info
+	rm -rf ./dist *.egg-info
 
-BUILD: PACKAGE UPLOAD
+RELEASE: BUILD UPLOAD
 
-PACKAGE:
+BUILD:
 	python setup.py sdist bdist_wheel
 
 UPLOAD:
