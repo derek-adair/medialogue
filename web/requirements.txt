@@ -8,7 +8,7 @@ djangorestframework
 django-anymail[mailgun]
 django-rq
 django-video-encoding>=1.0, <2.0
-django-ordered-model==3.6
+django-ordered-model==3.7.2
 django-drf-filepond
 
 #Dev Things

@@ -15,7 +15,7 @@ from django.urls import reverse
 from video_encoding.fields import VideoField
 from video_encoding.models import Format
 
-from ordered_model.models import OrderedModel, OrderedModelQuerySet
+from ordered_model.models import OrderedModel, OrderedModelManager, OrderedModelQuerySet
 
 import logging
 logger = logging.getLogger(__name__)
@@ -54,12 +54,26 @@ class SharedQueries(OrderedModelQuerySet):
         return self.filter(sites__id=settings.SITE_ID)
     def is_public(self):
         return self.filter(is_public=True)
-class MedialogueQueryManager(models.Manager.from_queryset(SharedQueries)):
+
+class SharedQueryManager(models.Manager):
+
+    def get_queryset(self):
+        return SharedQueries(self.model, using=self._db)
+
+    def is_public(self):
+        return self.get_queryset().is_public()
+
+    def on_site(self):
+        return self.get_queryset().on_site()
+
+class MedialogueQueryManager(SharedQueryManager, OrderedModelManager):
     pass
 
 
+
+
 class Album(models.Model):
-    objects = SharedQueries.as_manager()
+    objects = MedialogueQueryManager()
     date_added = models.DateTimeField(_('date published'), default=now)
     title = models.CharField(
         _('title'),
@@ -133,8 +147,9 @@ class Album(models.Model):
 
     def get_absolute_url(self):
         return reverse('medialogue:ml-album', args=[self.slug])
+
 class Media(OrderedModel):
-    objects = SharedQueries.as_manager()
+    objects = MedialogueQueryManager()
     album = models.ForeignKey(Album, related_name="media", on_delete=models.CASCADE)
     order_with_respect_to = 'album'
 
@@ -214,7 +229,7 @@ class Media(OrderedModel):
             return self.photo.src
 
 class Photo(Media):
-    objects = SharedQueries.as_manager()
+    objects = MedialogueQueryManager()
     src = models.ImageField(
         _('src'),
         max_length=IMAGE_FIELD_MAX_LENGTH,
@@ -254,7 +269,7 @@ class Photo(Media):
                     year, month, day = d.split(':')
                     hour, minute, second = t.split(':')
                     self.date_taken = datetime(int(year), int(month), int(day),
-                                               int(hour), int(minute), int(second))
+                                 int(hour), int(minute), int(second))
             except:
                 logger.error('Failed to read EXIF DateTimeOriginal', exc_info=True)
         super().save(*args, **kwargs)
@@ -265,7 +280,7 @@ class Video(Media):
     - medialogue.tasks.create_thumbnail 
     - django_video_encoding.tasks.convert_all_videos
     """
-    objects = SharedQueries.as_manager()
+    objects = MedialogueQueryManager()
     thumbnail = models.ImageField(blank=True)
     format_set = GenericRelation(Format)
     # video detail fields
