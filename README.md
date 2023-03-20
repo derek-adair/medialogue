@@ -42,6 +42,3 @@ Now Medialogue is running on localhost:8001 with a djangorq worker started, poin
 2. I've removed the manyToMany relationship between media/albums.  I am now using [django-ordered-model](https://github.com/django-ordered-model/django-ordered-model) and a one to many relationship.
 
 *I have no interest/bandwidth to develop a migration from photologue->medialogue; but would welcome a PR*
-
-### Issue Tracker
-Currently i'm not using github in loo of a private trello board.  For now i will leave issues open until I decide to migrate or figure out what goes where.
