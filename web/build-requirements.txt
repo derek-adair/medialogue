@@ -6,3 +6,4 @@ django-drf-filepond
 django-video-encoding>=1.0, <2.0
 djangorestframework
 django-ordered-model==3.7.2
+easy-thumbnails[svg]
