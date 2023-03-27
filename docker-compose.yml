@@ -3,26 +3,15 @@ services:
   web:
     restart: always
     build:
-      context: ./web
-      dockerfile: ./ops/Dockerfile
-    env_file: .env-dev
+      context: ./
+      dockerfile: ./demo/web/ops/Dockerfile
     ports:
         - "8001:8001"
     links:
-#      - postgres:postgres
       - redis:redis
     volumes:
-        - ./web:/code
-    command: python ./manage.py runserver 0.0.0.0:8001
-  
-#  postgres:
-#    restart: always
-#    image: postgres:9.6
-#    ports:
-#      - "5432:5432"
-#    volumes:
-#      - ./data/db:/var/lib/postgresql/data
-#  
+        - .:/code
+    command: ./testrunner.sh
   redis:
     restart: always
     image: redis:latest
@@ -31,8 +20,3 @@ services:
     command: ["sh", "-c", "redis-server --appendonly yes"]
     volumes:
       - ./queue_data:/data
-
-        #networks:
-        #    default:
-        #        external:
-        #            name: proxy
