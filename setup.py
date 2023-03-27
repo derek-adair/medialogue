@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 from pkg_resources import parse_requirements
 
-version = "2.0.9"
+version = "2.0.10"
 
 def get_requirements(source):
     with open(source) as f:
@@ -42,6 +42,6 @@ setup(
     package_data= {
             '': package_data,
         },
-    install_requires=get_requirements('build-requirements.txt'),
+    install_requires=get_requirements('requirements.txt'),
     url="https://github.com/derek-adair/medialogue",
     )
