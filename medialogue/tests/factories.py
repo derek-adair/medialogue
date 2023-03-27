@@ -17,15 +17,6 @@ from medialogue.models import Album, Photo
 
 RES_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
 LANDSCAPE_IMAGE_PATH = os.path.join(RES_DIR, 'test_medialogue_landscape.jpg')
-PORTRAIT_IMAGE_PATH = os.path.join(RES_DIR, 'test_medialogue_portrait.jpg')
-SQUARE_IMAGE_PATH = os.path.join(RES_DIR, 'test_medialogue_square.jpg')
-QUOTING_IMAGE_PATH = os.path.join(RES_DIR, 'test_medialogue_&quoting.jpg')
-UNICODE_IMAGE_PATH = os.path.join(RES_DIR, 'test_unicode_®.jpg')
-NONSENSE_IMAGE_PATH = os.path.join(RES_DIR, 'test_nonsense.jpg')
-SAMPLE_ZIP_PATH = os.path.join(RES_DIR, 'zips/sample.zip')
-SAMPLE_NOT_IMAGE_ZIP_PATH = os.path.join(RES_DIR, 'zips/not_image.zip')
-IGNORED_FILES_ZIP_PATH = os.path.join(RES_DIR, 'zips/ignored_files.zip')
-
 
 class AlbumFactory(factory.django.DjangoModelFactory):
 

@@ -11,8 +11,7 @@ from django.core.files.storage import default_storage
 
 from ..models import MEDIALOGUE_DIR, Photo
 from PIL import Image
-from .factories import (LANDSCAPE_IMAGE_PATH, NONSENSE_IMAGE_PATH, QUOTING_IMAGE_PATH, UNICODE_IMAGE_PATH,
-                        AlbumFactory, PhotoFactory)
+from .factories import (LANDSCAPE_IMAGE_PATH, AlbumFactory, PhotoFactory)
 from .helpers import MedialogueBaseTest
 
 
