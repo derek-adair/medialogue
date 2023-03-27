@@ -1,17 +1,31 @@
 version: "3.9"
 services:
-  web:
+  demo:
     restart: always
     build:
-      context: ./
-      dockerfile: ./demo/web/ops/Dockerfile
+        context: ./
+        dockerfile: ./demo/Dockerfile
+    env_file: .env-dev
     ports:
         - "8001:8001"
     links:
       - redis:redis
     volumes:
+        - ./demo:/code
+        - ./:/medialogue
+    command: python ./manage.py runserver 0.0.0.0:8001
+
+  testrunner:
+    restart: always
+    build:
+        context: .
+        dockerfile: Dockerfile.testrunner
+    links:
+      - redis:redis
+    volumes:
         - .:/code
-    command: ./testrunner.sh
+    command: bash ./testrunner.sh
+    
   redis:
     restart: always
     image: redis:latest
