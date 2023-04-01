@@ -91,7 +91,7 @@ class MediaForm(forms.Form):
             else:
                 logger.error('cound not process file "{}"'.format(filename))
 
-        return album.get_absolute_url()
+        return album
 
 class NewAlbumForm(MediaForm):
     """
