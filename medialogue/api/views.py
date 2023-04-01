@@ -43,7 +43,7 @@ def add_to_album(request, pk):
     form = MediaForm(post_data or None)
 
     if form.is_valid():
-        slug = form.save(album=album)
-        return Response({"msg":"added to album", "slug": slug }, status=status.HTTP_200_OK)
+        album_url = form.save(album=album)
+        return Response({"msg":"added to album", "redirect_url": album_url }, status=status.HTTP_200_OK)
     else:
         return Response({"msg" : "Invalid Form"}, status=status.HTTP_400_BAD_REQUEST)

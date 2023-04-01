@@ -36,7 +36,7 @@ $(function(){
       headers: { "Content-Type": "multipart/form-data" },
     }).then(function (response){
       if (response.status == 200){
-         window.location = `/album/${response.data.slug}`
+         window.location = `${response.data.redirect_url}`
       }
     });
   })
