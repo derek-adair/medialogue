@@ -1,6 +1,9 @@
 from django.template.defaultfilters import slugify
 import itertools
 
+import logging
+logger = logging.getLogger(__name__)
+
 def querydict_to_dict(query_dict):
     # request.POST only returns the first value in a list, this grabs it all
     # Lovingly stolen from: https://tinyurl.com/h6my82s6
@@ -13,6 +16,7 @@ def querydict_to_dict(query_dict):
     return data
 
 def _generate_slug(title, obj):
+    logger.info("utils.generate_slug called")
     slug_candidate = slug_original = slugify(title)
     num_found = 0
     for i in itertools.count(1):

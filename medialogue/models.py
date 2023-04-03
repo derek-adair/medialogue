@@ -79,15 +79,24 @@ class AutoSlugModel(models.Model):
         super().__init__(*args, **kwargs)
         self._slug_src = self.title
 
+    def generate_slug(self):
+        self.slug, num_found = _generate_slug(self.title, self.__class__)
+        return self.slug
+
     def save(self, *args, **kwargs):
+        logger.info("AutoSlugModel.save called by {}".format(self.__class__))
         slug_src_has_changed = False
         if self._get_pk_val() and (self._slug_src != self.title):
             slug_src_has_changed = True
 
+
         if self.slug == '' or slug_src_has_changed:
-            self.slug, num_found = _generate_slug(self.title, self.__class__)
+            self.generate_slug()
 
         super(AutoSlugModel, self).save(*args, **kwargs)
+
+
+
 
 class Album(AutoSlugModel):
     objects = MedialogueQueryManager()
@@ -165,7 +174,7 @@ class Album(AutoSlugModel):
     def get_absolute_url(self):
         return reverse('medialogue:ml-album', args=[self.slug])
 
-class Media(OrderedModel):
+class Media( OrderedModel, AutoSlugModel):
     objects = MedialogueQueryManager()
     album = models.ForeignKey(Album, related_name="media", on_delete=models.CASCADE)
     order_with_respect_to = 'album'
@@ -178,7 +187,6 @@ class Media(OrderedModel):
     title = models.CharField(
         _('title'),
         max_length=250,
-        unique=True,
     )
     slug = models.SlugField(
         _('slug'),
@@ -197,6 +205,11 @@ class Media(OrderedModel):
         verbose_name=_('sites'),
         blank=True,
     )
+
+    def generate_slug(self):
+        parent_cls_from_child = next(iter(self._meta.parents))
+        self.slug, num_found = _generate_slug(self.title, parent_cls_from_child)
+        return self.slug
 
     def get_previous_in_album(self, album):
         """Find the neighbour of this media object in the supplied album.
@@ -272,6 +285,7 @@ class Photo(Media):
         return reverse('medialogue:ml-photo', args=[self.slug])
 
     def save(self, *args, **kwargs):
+        logger.debug("Photo.save called")
         image_has_changed = False
         if self._get_pk_val() and (self._old_src != self.src):
             image_has_changed = True
@@ -289,7 +303,7 @@ class Photo(Media):
                                  int(hour), int(minute), int(second))
             except:
                 logger.error('Failed to read EXIF DateTimeOriginal', exc_info=True)
-        super().save(*args, **kwargs)
+        super(Photo, self).save(*args, **kwargs)
 
 class Video(Media):
     """
