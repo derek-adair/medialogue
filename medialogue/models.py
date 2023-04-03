@@ -71,9 +71,25 @@ class MedialogueQueryManager(SharedQueryManager, OrderedModelManager):
     pass
 
 
+class AutoSlugModel(models.Model):
+    class Meta:
+        abstract = True
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._slug_src = self.title
 
-class Album(models.Model):
+    def save(self, *args, **kwargs):
+        slug_src_has_changed = False
+        if self._get_pk_val() and (self._slug_src != self.title):
+            slug_src_has_changed = True
+
+        if self.slug == '' or slug_src_has_changed:
+            self.slug, num_found = _generate_slug(self.title, self.__class__)
+
+        super(AutoSlugModel, self).save(*args, **kwargs)
+
+class Album(AutoSlugModel):
     objects = MedialogueQueryManager()
     date_added = models.DateTimeField(_('date published'), default=now)
     title = models.CharField(
@@ -102,13 +118,6 @@ class Album(models.Model):
         get_latest_by = 'date_added'
         verbose_name = _('Album')
         verbose_name_plural = _('Albums')
-
-    @classmethod
-    def create(cls, title):
-        slug = _generate_slug(title, cls)
-        album = Album.create(title=title, slug=slug)
-        return album
-
 
     def __str__(self):
         return self.title

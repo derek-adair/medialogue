@@ -1,3 +1,6 @@
+from django.template.defaultfilters import slugify
+import itertools
+
 def querydict_to_dict(query_dict):
     # request.POST only returns the first value in a list, this grabs it all
     # Lovingly stolen from: https://tinyurl.com/h6my82s6
@@ -13,7 +16,7 @@ def _generate_slug(title, obj):
     slug_candidate = slug_original = slugify(title)
     num_found = 0
     for i in itertools.count(1):
-        if not obj.objects.filter(slug=slug_candidate).exists() and not Video.objects.filter(slug=slug_candidate).exists():
+        if not obj.objects.filter(slug=slug_candidate).exists():
             break
         num_found+=1
         slug_candidate = '{}-{}'.format(slug_original, i)
