@@ -12,6 +12,7 @@ from django.contrib.sites.models import Site
 from django.utils.timezone import now
 from django.urls import reverse
 
+from .utils import _generate_slug
 from video_encoding.fields import VideoField
 from video_encoding.models import Format
 
@@ -101,6 +102,13 @@ class Album(models.Model):
         get_latest_by = 'date_added'
         verbose_name = _('Album')
         verbose_name_plural = _('Albums')
+
+    @classmethod
+    def create(cls, title):
+        slug = _generate_slug(title, cls)
+        album = Album.create(title=title, slug=slug)
+        return album
+
 
     def __str__(self):
         return self.title

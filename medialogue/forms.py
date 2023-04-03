@@ -20,16 +20,7 @@ from django_drf_filepond.models import TemporaryUpload
 
 from .models import Album, Video, Photo
 
-
-def _generate_slug(title, obj):
-    slug_candidate = slug_original = slugify(title)
-    num_found = 0
-    for i in itertools.count(1):
-        if not obj.objects.filter(slug=slug_candidate).exists() and not Video.objects.filter(slug=slug_candidate).exists():
-            break
-        num_found+=1
-        slug_candidate = '{}-{}'.format(slug_original, i)
-    return slug_candidate, num_found
+from .utils import _generate_slug
 
 class MediaForm(forms.Form):
     """
