@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.dispatch import receiver, Signal
 from django_rq import enqueue
 from .models import Video
 from video_encoding import tasks
@@ -19,3 +19,5 @@ def convert_video(sender, instance, **kwargs):
             instance._meta.app_label,
             instance._meta.model_name,
             instance.pk)
+
+media_added = Signal()

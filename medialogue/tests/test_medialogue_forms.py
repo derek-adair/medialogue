@@ -1,5 +1,5 @@
 import os
-import io
+from unittest.mock import patch
 
 import pytest
 from PIL import Image
@@ -13,8 +13,7 @@ from medialogue.forms import *
 from medialogue.models import Photo
 
 class BulkMediaFormTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(cls):
 	#Fake the filepond file uplaod
         cls.upload_id = _get_file_id()
         cls.file_id = _get_file_id()
@@ -55,3 +54,23 @@ class BulkMediaFormTestCase(TestCase):
 
         self.assertEqual(os.path.basename(Photo.objects.first().src.name),
                 self.min_gallery['filepond'][0])
+
+    @patch("medialogue.signals.media_added.send")
+    def test_adding_media_fires_added_media_signal(self, mock):
+        form = NewAlbumForm(self.min_gallery)
+
+        form.is_valid()
+        form.save()
+
+        self.assertTrue(mock.called)
+        self.assertEqual(mock.call_count, 1)
+
+    @patch("medialogue.signals.media_added.send")
+    def test_media_form_without_media_does_not_send_signal(self, mock):
+        form = NewAlbumForm({'album_title': 'blah'})
+
+        form.is_valid()
+        form.save()
+
+        self.assertFalse(mock.called)
+        self.assertEqual(mock.call_count, 0)

@@ -19,6 +19,7 @@ from django_drf_filepond.api import store_upload, get_stored_upload_file_data
 from django_drf_filepond.models import TemporaryUpload
 
 from .models import Album, Video, Photo
+from .signals import media_added
 
 from .utils import _generate_slug
 
@@ -37,6 +38,7 @@ class MediaForm(forms.Form):
     def save(self, album):
         filelist = self.cleaned_data['filepond']
         CURRENT_SITE = Site.objects.get(id=settings.SITE_ID)
+        new_media_detected = False
 
         # read list of filepond IDS which we will then import
         # via store_upload from drf-filepond: https://tinyurl.com/3t3623b2
@@ -66,21 +68,24 @@ class MediaForm(forms.Form):
                             title=numbered_title,
                             slug=slug,
                             is_public=self.cleaned_data['is_public'],
+                            album=album
                         )
 
                 photo.src = "medialogue/{}".format(upload_id)
-                photo.album = album
                 photo.save()
                 photo.sites.add(CURRENT_SITE)
             elif file_mimetype == "video":
                 logger.info("video mimetype detected")
-                video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'])
+                video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'], album=album)
                 video.src = "medialogue/{}".format(upload_id)
-                video.album = album
                 video.save()
                 video.sites.add(CURRENT_SITE)
             else:
                 logger.error('cound not process file "{}"'.format(filename))
+            new_media_detected = True
+
+        if new_media_detected:
+            media_added.send(sender=album.__class__, instance=album)
 
         return album
 
