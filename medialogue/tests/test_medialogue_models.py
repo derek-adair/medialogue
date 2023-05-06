@@ -1,5 +1,7 @@
-from django.test import TestCase, Client
 import pytest
+
+from django.test import TestCase, Client
+
 from medialogue.models import Album, Photo, Video
 from medialogue.forms import MediaForm
 
@@ -25,7 +27,6 @@ class MediaModelTest(TestCase):
         photo.save()
 
         self.assertEqual("a-test-title", photo.slug)
-
 
     def test_slug_is_auto_populated(self):
         album = AlbumFactory()
