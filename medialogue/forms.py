@@ -71,13 +71,13 @@ class MediaForm(forms.Form):
                             album=album
                         )
 
-                photo.src = "medialogue/{}".format(upload_id)
+                photo.src = "{}".format(upload_id)
                 photo.save()
                 photo.sites.add(CURRENT_SITE)
             elif file_mimetype == "video":
                 logger.info("video mimetype detected")
                 video = Video(title=numbered_title, slug=slug, is_public=self.cleaned_data['is_public'], album=album)
-                video.src = "medialogue/{}".format(upload_id)
+                video.src = "{}".format(upload_id)
                 video.save()
                 video.sites.add(CURRENT_SITE)
             else:
