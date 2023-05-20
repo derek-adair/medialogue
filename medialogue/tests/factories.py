@@ -7,6 +7,11 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.utils.timezone import utc
 
+# Temp File Stuff
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django_drf_filepond.models import TemporaryUpload
+from django_drf_filepond.utils import _get_file_id
+
 try:
     import factory
 except ImportError:
@@ -88,3 +93,25 @@ class PhotoFactory(factory.django.DjangoModelFactory):
         if extracted:
             for site in extracted:
                 self.sites.add(site)
+
+class TemporyUploadFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = TemporaryUpload
+
+    img_bytes = b'GIF89a\x01\x00\x01\x00\x00\xff\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x00;'
+    file_name = 'tiny.gif'
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        upload_id = _get_file_id()
+        file_id = _get_file_id()
+        uploaded_file = SimpleUploadedFile(cls.file_name, cls.img_bytes, content_type="image/gif")
+
+        temp_upload = TemporaryUpload(
+            upload_id=upload_id,
+            file_id=file_id,
+            file=uploaded_file, upload_name=cls.file_name,
+            upload_type=TemporaryUpload.FILE_DATA
+        )
+        temp_upload.save()
+        return temp_upload
