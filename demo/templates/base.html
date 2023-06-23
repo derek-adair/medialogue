@@ -11,10 +11,10 @@
     </head>
     <body>
         <ul>
-            <li><a href="{% url "medialogue:new-album" %}">New Album</a></li>
+            <li><a href="{% url "medialogue:new-album" %}">New Album (upload media)</a></li>
             <li><a href="{% url "medialogue:ml-album-list" %}">Album List</a></li>
-            <li><a href="{% url "medialogue:ml-photo-list" %}">Photos</a></li>
-            <li><a href="{% url "medialogue:ml-video-list" %}">Videos</a></li>
+            <li><a href="{% url "medialogue:ml-photo-list" %}">Photos List</a></li>
+            <li><a href="{% url "medialogue:ml-video-list" %}">Videos List</a></li>
         </ul>
         {% block content %}{% endblock %}
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
